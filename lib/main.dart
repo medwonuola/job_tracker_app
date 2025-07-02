@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:job_tracker_app/providers/application_tracker_provider.dart';
-import 'package:job_tracker_app/providers/job_search_provider.dart';
-import 'package:job_tracker_app/screens/home_screen.dart';
-import 'package:job_tracker_app/theme/d3x_theme.dart';
+import 'package:job_tracker_app/data/providers/application_tracker_provider.dart';
+import 'package:job_tracker_app/data/providers/job_search_provider.dart';
+import 'package:job_tracker_app/features/home/home_screen.dart';
+import 'package:job_tracker_app/core/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const JobTrackerApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const ContextApp());
 }
 
-class JobTrackerApp extends StatelessWidget {
-  const JobTrackerApp({super.key});
+class ContextApp extends StatelessWidget {
+  const ContextApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +21,8 @@ class JobTrackerApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ApplicationTrackerProvider()),
       ],
       child: MaterialApp(
-        title: 'D3X Job Tracker',
-        theme: D3XTheme.darkTheme,
+        title: 'Context Job Tracker',
+        theme: ContextTheme.lightTheme,
         home: const HomeScreen(),
         debugShowCheckedModeBanner: false,
       ),

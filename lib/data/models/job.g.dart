@@ -8,6 +8,9 @@ Job _$JobFromJson(Map<String, dynamic> json) => Job(
       isRemote: json['is_remote'] as bool,
       company: Company.fromJson(json['company'] as Map<String, dynamic>),
       location: JobLocation.fromJson(json['location'] as Map<String, dynamic>),
+      status: json['status'] == null
+          ? ApplicationStatus.saved
+          : _statusFromJson(json['status'] as String?),
     );
 
 Map<String, dynamic> _$JobToJson(Job instance) => <String, dynamic>{

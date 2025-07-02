@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/job.dart';
 
 class ApplicationTrackerProvider with ChangeNotifier {
-  static const String _storageKey = 'tracked_jobs';
+  static const String _storageKey = 'tracked_jobs_map';
 
   Map<String, Job> _trackedJobs = {};
   Map<String, Job> get trackedJobs => _trackedJobs;
@@ -22,13 +22,16 @@ class ApplicationTrackerProvider with ChangeNotifier {
 
   Future<void> loadTrackedJobs() async {
     final prefs = await SharedPreferences.getInstance();
-    final List<String> jobsJson = prefs.getStringList(_storageKey) ?? [];
+    final String? jobsJsonString = prefs.getString(_storageKey);
 
-    _trackedJobs = {
-      for (var jsonString in jobsJson)
-        (json.decode(jsonString) as Map<String, dynamic>)['id']:
-            Job.fromJson(json.decode(jsonString))
-    };
+    if (jobsJsonString != null && jobsJsonString.isNotEmpty) {
+      final Map<String, dynamic> decodedMap = json.decode(jobsJsonString);
+      _trackedJobs = decodedMap.map(
+        (key, value) => MapEntry(key, Job.fromJson(value)),
+      );
+    } else {
+      _trackedJobs = {};
+    }
 
     _isLoaded = true;
     notifyListeners();
@@ -36,9 +39,8 @@ class ApplicationTrackerProvider with ChangeNotifier {
 
   Future<void> _saveJobs() async {
     final prefs = await SharedPreferences.getInstance();
-    final List<String> jobsJson =
-        _trackedJobs.values.map((job) => json.encode(job.toJson())).toList();
-    await prefs.setStringList(_storageKey, jobsJson);
+    final String jsonString = json.encode(_trackedJobs);
+    await prefs.setString(_storageKey, jsonString);
   }
 
   Future<void> trackJob(Job job) async {
@@ -57,7 +59,7 @@ class ApplicationTrackerProvider with ChangeNotifier {
 
   Future<void> updateJobStatus(
       String jobId, ApplicationStatus newStatus) async {
-    if (!isJobTracked(jobId)) return;
+    if (!_trackedJobs.containsKey(jobId)) return;
     _trackedJobs[jobId]!.status = newStatus;
     await _saveJobs();
     notifyListeners();

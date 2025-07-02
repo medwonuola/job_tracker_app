@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import '../api/api_service.dart';
+import '../../api/api_service.dart';
 import '../models/job.dart';
 
 enum SearchState { initial, loading, loaded, error }

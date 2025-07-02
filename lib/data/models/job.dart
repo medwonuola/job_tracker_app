@@ -4,6 +4,13 @@ part 'job.g.dart';
 
 enum ApplicationStatus { saved, applied, interviewing, offered, rejected }
 
+ApplicationStatus _statusFromJson(String? status) {
+  return ApplicationStatus.values.firstWhere(
+    (e) => e.name == status,
+    orElse: () => ApplicationStatus.saved,
+  );
+}
+
 @JsonSerializable(explicitToJson: true)
 class Job {
   final String id;
@@ -14,7 +21,7 @@ class Job {
   final Company company;
   final JobLocation location;
 
-  @JsonKey(includeFromJson: false, includeToJson: true)
+  @JsonKey(fromJson: _statusFromJson, defaultValue: ApplicationStatus.saved)
   ApplicationStatus status;
 
   Job({

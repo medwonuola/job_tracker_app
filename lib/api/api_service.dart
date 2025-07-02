@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import '../models/job.dart';
+import '../data/models/job.dart';
 
 class ApiService {
   final Dio _dio = Dio();
@@ -10,8 +10,8 @@ class ApiService {
   ApiService() {
     _dio.options.headers['X-RapidAPI-Key'] = _apiKey;
     _dio.options.headers['X-RapidAPI-Host'] = 'hidden-job-board.p.rapidapi.com';
-    _dio.options.connectTimeout = const Duration(seconds: 10);
-    _dio.options.receiveTimeout = const Duration(seconds: 10);
+    _dio.options.connectTimeout = const Duration(seconds: 15);
+    _dio.options.receiveTimeout = const Duration(seconds: 15);
   }
 
   Future<List<Job>> searchJobs({required String query}) async {
