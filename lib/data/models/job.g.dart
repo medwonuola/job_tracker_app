@@ -11,7 +11,7 @@ Job _$JobFromJson(Map<String, dynamic> json) => Job(
       title: json['title'] as String,
       description: json['description'] as String,
       applyUrl: json['applyUrl'] as String?,
-      isRemote: json['isRemote'] as bool,
+      isRemote: json['isRemote'] as bool? ?? false,
       company: Company.fromJson(json['company'] as Map<String, dynamic>),
       location: JobLocation.fromJson(json['location'] as Map<String, dynamic>),
       status: json['status'] == null

@@ -17,6 +17,7 @@ class Job {
   final String title;
   final String description;
   final String? applyUrl;
+  @JsonKey(defaultValue: false)
   final bool isRemote;
   final Company company;
   final JobLocation location;
