@@ -71,8 +71,7 @@ class _JobSearchScreenState extends State<JobSearchScreen> {
                   case SearchState.loaded:
                     if (provider.jobs.isEmpty) {
                       return const Center(
-                          child:
-                              Text('No jobs found. Try another search.'));
+                          child: Text('No jobs found. Try another search.'));
                     }
                     return ListView.builder(
                       padding: const EdgeInsets.symmetric(
@@ -86,8 +85,7 @@ class _JobSearchScreenState extends State<JobSearchScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    JobDetailScreen(job: job),
+                                builder: (context) => JobDetailScreen(job: job),
                               ),
                             );
                           },
@@ -95,7 +93,6 @@ class _JobSearchScreenState extends State<JobSearchScreen> {
                       },
                     );
                   case SearchState.initial:
-                  default:
                     return const Center(
                         child: Text('Search for jobs to get started.'));
                 }

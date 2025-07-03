@@ -1,11 +1,17 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
 part of 'job.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
 
 Job _$JobFromJson(Map<String, dynamic> json) => Job(
       id: json['id'] as String,
       title: json['title'] as String,
       description: json['description'] as String,
       applyUrl: json['applyUrl'] as String?,
-      isRemote: json['is_remote'] as bool,
+      isRemote: json['isRemote'] as bool,
       company: Company.fromJson(json['company'] as Map<String, dynamic>),
       location: JobLocation.fromJson(json['location'] as Map<String, dynamic>),
       status: json['status'] == null
@@ -18,7 +24,7 @@ Map<String, dynamic> _$JobToJson(Job instance) => <String, dynamic>{
       'title': instance.title,
       'description': instance.description,
       'applyUrl': instance.applyUrl,
-      'is_remote': instance.isRemote,
+      'isRemote': instance.isRemote,
       'company': instance.company.toJson(),
       'location': instance.location.toJson(),
       'status': _$ApplicationStatusEnumMap[instance.status]!,
