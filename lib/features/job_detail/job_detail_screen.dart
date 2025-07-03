@@ -72,11 +72,11 @@ class JobDetailScreen extends StatelessWidget {
             Html(
               data: job.description,
               style: {
-                "body": Style.fromTextStyle(textTheme.bodyLarge!),
-                "h1, h2, h3, h4, h5, h6":
+                'body': Style.fromTextStyle(textTheme.bodyLarge!),
+                'h1, h2, h3, h4, h5, h6':
                     Style.fromTextStyle(textTheme.headlineMedium!),
-                "p": Style.fromTextStyle(textTheme.bodyLarge!),
-                "li": Style.fromTextStyle(
+                'p': Style.fromTextStyle(textTheme.bodyLarge!),
+                'li': Style.fromTextStyle(
                   textTheme.bodyLarge!.copyWith(height: 1.8),
                 ),
               },

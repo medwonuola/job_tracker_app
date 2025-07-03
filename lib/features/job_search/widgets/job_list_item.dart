@@ -22,7 +22,6 @@ class JobListItem extends StatelessWidget {
     return BorderedCard(
       onTap: onTap,
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           CachedNetworkImage(
             imageUrl: job.company.image ?? '',
@@ -30,7 +29,6 @@ class JobListItem extends StatelessWidget {
               width: 50,
               height: 50,
               decoration: BoxDecoration(
-                shape: BoxShape.rectangle,
                 image:
                     DecorationImage(image: imageProvider, fit: BoxFit.contain),
               ),
@@ -39,15 +37,19 @@ class JobListItem extends StatelessWidget {
               width: 50,
               height: 50,
               color: ContextColors.background,
-              child: const Icon(Icons.business,
-                  color: ContextColors.textSecondary),
+              child: const Icon(
+                Icons.business,
+                color: ContextColors.textSecondary,
+              ),
             ),
             errorWidget: (context, url, error) => Container(
               width: 50,
               height: 50,
               color: ContextColors.background,
-              child: const Icon(Icons.business,
-                  color: ContextColors.textSecondary),
+              child: const Icon(
+                Icons.business,
+                color: ContextColors.textSecondary,
+              ),
             ),
           ),
           const SizedBox(width: ContextSpacing.md),

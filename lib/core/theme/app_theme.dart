@@ -81,16 +81,13 @@ class ContextTheme {
       padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(20)),
-        side: BorderSide.none,
       ),
     ),
     cardTheme: const CardThemeData(
       // Corrected class name
       elevation: 0,
       margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(0)),
-      ),
+      shape: RoundedRectangleBorder(),
     ),
     tabBarTheme: TabBarThemeData(
       // Corrected class name

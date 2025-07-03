@@ -23,44 +23,42 @@ class ContextButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ButtonStyle(
-        elevation: MaterialStateProperty.all(0),
-        backgroundColor: MaterialStateProperty.resolveWith<Color>(
-          (Set<MaterialState> states) {
+        elevation: WidgetStateProperty.all(0),
+        backgroundColor: WidgetStateProperty.resolveWith<Color>(
+          (Set<WidgetState> states) {
             if (variant == ContextButtonVariant.outline) {
               return Colors.transparent;
             }
-            if (states.contains(MaterialState.pressed)) {
+            if (states.contains(WidgetState.pressed)) {
               return ContextColors.textPrimary;
             }
             return ContextColors.accent;
           },
         ),
-        foregroundColor: MaterialStateProperty.resolveWith<Color>(
-          (Set<MaterialState> states) {
+        foregroundColor: WidgetStateProperty.resolveWith<Color>(
+          (Set<WidgetState> states) {
             if (variant == ContextButtonVariant.outline) {
               return ContextColors.textPrimary;
             }
-            if (states.contains(MaterialState.pressed)) {
+            if (states.contains(WidgetState.pressed)) {
               return ContextColors.accent;
             }
             return ContextColors.textPrimary;
           },
         ),
-        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-          const RoundedRectangleBorder(
-            borderRadius: BorderRadius.zero,
-          ),
+        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+          const RoundedRectangleBorder(),
         ),
-        side: MaterialStateProperty.all<BorderSide>(
+        side: WidgetStateProperty.all<BorderSide>(
           const BorderSide(color: ContextColors.borderDark, width: 2.0),
         ),
-        padding: MaterialStateProperty.all<EdgeInsets>(
+        padding: WidgetStateProperty.all<EdgeInsets>(
           const EdgeInsets.symmetric(
             vertical: ContextSpacing.md,
             horizontal: ContextSpacing.lg,
           ),
         ),
-        textStyle: MaterialStateProperty.all(textTheme.labelLarge),
+        textStyle: WidgetStateProperty.all(textTheme.labelLarge),
       ),
       child: Text(label),
     );

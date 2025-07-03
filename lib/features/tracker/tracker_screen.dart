@@ -30,8 +30,9 @@ class _TrackerScreenState extends State<TrackerScreen> {
         builder: (context, provider, child) {
           if (!provider.isLoaded) {
             return const Center(
-                child:
-                    CircularProgressIndicator(color: ContextColors.textPrimary));
+              child:
+                  CircularProgressIndicator(color: ContextColors.textPrimary),
+            );
           }
 
           if (provider.trackedJobs.isEmpty) {

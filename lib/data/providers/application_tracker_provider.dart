@@ -58,7 +58,9 @@ class ApplicationTrackerProvider with ChangeNotifier {
   }
 
   Future<void> updateJobStatus(
-      String jobId, ApplicationStatus newStatus) async {
+    String jobId,
+    ApplicationStatus newStatus,
+  ) async {
     if (!_trackedJobs.containsKey(jobId)) return;
     _trackedJobs[jobId]!.status = newStatus;
     await _saveJobs();

@@ -46,8 +46,10 @@ class _JobSearchScreenState extends State<JobSearchScreen> {
               decoration: InputDecoration(
                 hintText: 'e.g., "Flutter Developer"',
                 suffixIcon: IconButton(
-                  icon: const Icon(Icons.search,
-                      color: ContextColors.textSecondary),
+                  icon: const Icon(
+                    Icons.search,
+                    color: ContextColors.textSecondary,
+                  ),
                   onPressed: _performSearch,
                 ),
               ),
@@ -63,19 +65,24 @@ class _JobSearchScreenState extends State<JobSearchScreen> {
                 switch (provider.state) {
                   case SearchState.loading:
                     return const Center(
-                        child: CircularProgressIndicator(
-                            color: ContextColors.textPrimary));
+                      child: CircularProgressIndicator(
+                        color: ContextColors.textPrimary,
+                      ),
+                    );
                   case SearchState.error:
                     return Center(
-                        child: Text('Error: ${provider.errorMessage}'));
+                      child: Text('Error: ${provider.errorMessage}'),
+                    );
                   case SearchState.loaded:
                     if (provider.jobs.isEmpty) {
                       return const Center(
-                          child: Text('No jobs found. Try another search.'));
+                        child: Text('No jobs found. Try another search.'),
+                      );
                     }
                     return ListView.builder(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: ContextSpacing.md),
+                        horizontal: ContextSpacing.md,
+                      ),
                       itemCount: provider.jobs.length,
                       itemBuilder: (context, index) {
                         final job = provider.jobs[index];
@@ -94,7 +101,8 @@ class _JobSearchScreenState extends State<JobSearchScreen> {
                     );
                   case SearchState.initial:
                     return const Center(
-                        child: Text('Search for jobs to get started.'));
+                      child: Text('Search for jobs to get started.'),
+                    );
                 }
               },
             ),

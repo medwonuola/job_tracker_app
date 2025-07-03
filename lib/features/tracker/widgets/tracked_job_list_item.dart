@@ -59,10 +59,12 @@ class TrackedJobListItem extends StatelessWidget {
                       value: s,
                       child: Row(
                         children: [
-                          Icon(s.icon,
-                              color: s == job.status
-                                  ? ContextColors.accentHover
-                                  : ContextColors.textSecondary),
+                          Icon(
+                            s.icon,
+                            color: s == job.status
+                                ? ContextColors.accentHover
+                                : ContextColors.textSecondary,
+                          ),
                           const SizedBox(width: 8),
                           Text(s.displayName),
                         ],
@@ -70,8 +72,10 @@ class TrackedJobListItem extends StatelessWidget {
                     );
                   }).toList();
                 },
-                icon: const Icon(Icons.more_vert,
-                    color: ContextColors.textSecondary),
+                icon: const Icon(
+                  Icons.more_vert,
+                  color: ContextColors.textSecondary,
+                ),
               ),
             ],
           ),
