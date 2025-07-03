@@ -9,12 +9,7 @@ class ApplicationTrackerProvider with ChangeNotifier {
   Map<String, Job> _trackedJobs = {};
   Map<String, Job> get trackedJobs => _trackedJobs;
 
-  bool _isLoaded = false;
-  bool get isLoaded => _isLoaded;
-
-  ApplicationTrackerProvider() {
-    loadTrackedJobs();
-  }
+  ApplicationTrackerProvider();
 
   bool isJobTracked(String jobId) => _trackedJobs.containsKey(jobId);
 
@@ -32,8 +27,6 @@ class ApplicationTrackerProvider with ChangeNotifier {
     } else {
       _trackedJobs = {};
     }
-
-    _isLoaded = true;
     notifyListeners();
   }
 
@@ -60,7 +53,9 @@ class ApplicationTrackerProvider with ChangeNotifier {
   }
 
   Future<void> updateJobStatus(
-      String jobId, ApplicationStatus newStatus,) async {
+    String jobId,
+    ApplicationStatus newStatus,
+  ) async {
     if (!_trackedJobs.containsKey(jobId)) return;
     _trackedJobs[jobId]!.status = newStatus;
     await _saveJobs();

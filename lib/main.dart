@@ -5,20 +5,29 @@ import 'package:job_tracker_app/features/home/home_screen.dart';
 import 'package:job_tracker_app/core/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const ContextApp());
+
+  final applicationTrackerProvider = ApplicationTrackerProvider();
+  await applicationTrackerProvider.loadTrackedJobs();
+
+  runApp(ContextApp(applicationTrackerProvider: applicationTrackerProvider));
 }
 
 class ContextApp extends StatelessWidget {
-  const ContextApp({super.key});
+  final ApplicationTrackerProvider applicationTrackerProvider;
+
+  const ContextApp({
+    super.key,
+    required this.applicationTrackerProvider,
+  });
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => JobSearchProvider()),
-        ChangeNotifierProvider(create: (_) => ApplicationTrackerProvider()),
+        ChangeNotifierProvider.value(value: applicationTrackerProvider),
       ],
       child: MaterialApp(
         title: 'Context Job Tracker',

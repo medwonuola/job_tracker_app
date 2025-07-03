@@ -28,13 +28,6 @@ class _TrackerScreenState extends State<TrackerScreen> {
       ),
       body: Consumer<ApplicationTrackerProvider>(
         builder: (context, provider, child) {
-          if (!provider.isLoaded) {
-            return const Center(
-              child:
-                  CircularProgressIndicator(color: ContextColors.textPrimary),
-            );
-          }
-
           if (provider.trackedJobs.isEmpty) {
             return const Center(
               child: Text('No tracked applications yet.'),
