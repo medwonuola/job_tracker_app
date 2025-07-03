@@ -103,7 +103,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
                             onTap: () {
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(
+                                MaterialPageRoute<void>(
                                   builder: (context) =>
                                       JobDetailScreen(job: job),
                                 ),

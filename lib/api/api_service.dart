@@ -16,7 +16,8 @@ class ApiService {
 
   Future<List<Job>> searchJobs({required String query}) async {
     try {
-      final response = await _dio.get(
+      final Response<Map<String, dynamic>> response =
+          await _dio.get<Map<String, dynamic>>(
         '$_baseUrl/search-jobs',
         queryParameters: {
           'locationShort': 'US',
@@ -28,11 +29,14 @@ class ApiService {
       );
 
       if (response.statusCode == 200 && response.data != null) {
-        final List<dynamic> jobList = response.data['jobs'];
-        return jobList.map((json) => Job.fromJson(json)).toList();
+        final List<dynamic> jobList = response.data!['jobs'] as List<dynamic>;
+        return jobList
+            .map((json) => Job.fromJson(json as Map<String, dynamic>))
+            .toList();
       } else {
         throw Exception(
-            'API Error: Status ${response.statusCode}, Body: ${response.data}');
+          'API Error: Status ${response.statusCode}, Body: ${response.data}',
+        );
       }
     } on DioException catch (e) {
       throw Exception('Network Error: ${e.message}');

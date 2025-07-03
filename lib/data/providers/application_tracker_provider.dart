@@ -16,18 +16,18 @@ class ApplicationTrackerProvider with ChangeNotifier {
     loadTrackedJobs();
   }
 
-  bool isJobTracked(String jobId) {
-    return _trackedJobs.containsKey(jobId);
-  }
+  bool isJobTracked(String jobId) => _trackedJobs.containsKey(jobId);
 
   Future<void> loadTrackedJobs() async {
     final prefs = await SharedPreferences.getInstance();
     final String? jobsJsonString = prefs.getString(_storageKey);
 
     if (jobsJsonString != null && jobsJsonString.isNotEmpty) {
-      final Map<String, dynamic> decodedMap = json.decode(jobsJsonString);
+      final Map<String, dynamic> decodedMap =
+          json.decode(jobsJsonString) as Map<String, dynamic>;
       _trackedJobs = decodedMap.map(
-        (key, value) => MapEntry(key, Job.fromJson(value)),
+        (key, value) =>
+            MapEntry(key, Job.fromJson(value as Map<String, dynamic>)),
       );
     } else {
       _trackedJobs = {};
@@ -39,7 +39,9 @@ class ApplicationTrackerProvider with ChangeNotifier {
 
   Future<void> _saveJobs() async {
     final prefs = await SharedPreferences.getInstance();
-    final String jsonString = json.encode(_trackedJobs);
+    final Map<String, dynamic> jsonMap =
+        _trackedJobs.map((k, v) => MapEntry(k, v.toJson()));
+    final String jsonString = json.encode(jsonMap);
     await prefs.setString(_storageKey, jsonString);
   }
 
@@ -58,9 +60,7 @@ class ApplicationTrackerProvider with ChangeNotifier {
   }
 
   Future<void> updateJobStatus(
-    String jobId,
-    ApplicationStatus newStatus,
-  ) async {
+      String jobId, ApplicationStatus newStatus,) async {
     if (!_trackedJobs.containsKey(jobId)) return;
     _trackedJobs[jobId]!.status = newStatus;
     await _saveJobs();
