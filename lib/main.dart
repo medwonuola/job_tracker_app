@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:job_tracker_app/data/providers/application_tracker_provider.dart';
 import 'package:job_tracker_app/data/providers/job_search_provider.dart';
 import 'package:job_tracker_app/data/providers/stats_provider.dart';
@@ -8,6 +9,13 @@ import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  try {
+    await dotenv.load();
+  } catch (e) {
+    debugPrint(
+        'Warning: .env file not found. Please create .env file with RAPIDAPI_KEY.',);
+  }
 
   final applicationTrackerProvider = ApplicationTrackerProvider();
   await applicationTrackerProvider.loadTrackedJobs();
@@ -29,10 +37,11 @@ class ContextApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => JobSearchProvider()),
         ChangeNotifierProvider.value(value: applicationTrackerProvider),
-        ChangeNotifierProvider(
+        ChangeNotifierProxyProvider<ApplicationTrackerProvider, StatsProvider>(
           create: (context) => StatsProvider(
             Provider.of<ApplicationTrackerProvider>(context, listen: false),
           ),
+          update: (context, tracker, previousStats) => StatsProvider(tracker),
         ),
       ],
       child: MaterialApp(

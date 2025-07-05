@@ -1,4 +1,8 @@
+import 'dart:collection';
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:uuid/uuid.dart';
+import '../core/exceptions/api_exceptions.dart';
 import '../data/models/job.dart';
 import '../data/models/search_filters.dart';
 import '../data/models/location_suggestion.dart';
@@ -6,13 +10,16 @@ import '../data/models/location_suggestion.dart';
 class ApiService {
   final Dio _dio = Dio();
   static const String _baseUrl = 'https://hidden-job-board.p.rapidapi.com';
-  static const String _apiKey =
-      '0db1d88ad9msh5325755eeb1a162p11dd72jsn3298ebbfc37d';
+  late final String _apiKey;
+  final Uuid _uuid = const Uuid();
 
-  final Map<String, List<LocationSuggestion>> _locationCache = {};
+  final LinkedHashMap<String, List<LocationSuggestion>> _locationCache =
+      LinkedHashMap<String, List<LocationSuggestion>>();
   static const int _maxCacheEntries = 50;
 
   ApiService() {
+    _apiKey = dotenv.env['RAPIDAPI_KEY']!;
+
     _dio.options.headers['X-RapidAPI-Key'] = _apiKey;
     _dio.options.headers['X-RapidAPI-Host'] = 'hidden-job-board.p.rapidapi.com';
     _dio.options.connectTimeout = const Duration(seconds: 15);
@@ -44,20 +51,24 @@ class ApiService {
       if (response.statusCode == 200 && response.data != null) {
         return _parseJobsResponse(response.data);
       } else {
-        throw Exception(
+        throw ServerException(
           'API Error: Status ${response.statusCode}, Body: ${response.data}',
+          statusCode: response.statusCode,
         );
       }
     } on DioException catch (e) {
       if (e.response?.statusCode == 429) {
-        throw Exception('Rate limit exceeded. Please try again later.');
+        throw const RateLimitException(
+            'Rate limit exceeded. Please try again later.');
       } else if (e.response?.statusCode == 401) {
-        throw Exception('API authentication failed. Please check API key.');
+        throw const AuthenticationException(
+            'API authentication failed. Please check API key.');
       } else {
-        throw Exception('Network Error: ${e.message}');
+        throw NetworkException('Network Error: ${e.message}');
       }
     } catch (e) {
-      throw Exception('An unexpected error occurred: $e');
+      if (e is ApiException) rethrow;
+      throw ServerException('An unexpected error occurred: $e');
     }
   }
 
@@ -69,15 +80,18 @@ class ApiService {
         jobsArray = responseData;
       } else if (responseData is Map<String, dynamic>) {
         final dataMap = responseData;
-        
+
         if (dataMap.containsKey('jobs') && dataMap['jobs'] is List<dynamic>) {
           jobsArray = dataMap['jobs'] as List<dynamic>;
-        } else if (dataMap.containsKey('data') && dataMap['data'] is List<dynamic>) {
+        } else if (dataMap.containsKey('data') &&
+            dataMap['data'] is List<dynamic>) {
           jobsArray = dataMap['data'] as List<dynamic>;
-        } else if (dataMap.containsKey('results') && dataMap['results'] is List<dynamic>) {
+        } else if (dataMap.containsKey('results') &&
+            dataMap['results'] is List<dynamic>) {
           jobsArray = dataMap['results'] as List<dynamic>;
         } else {
-          final possibleArrays = dataMap.values.whereType<List<dynamic>>().toList();
+          final possibleArrays =
+              dataMap.values.whereType<List<dynamic>>().toList();
           if (possibleArrays.isNotEmpty) {
             jobsArray = possibleArrays.first;
           } else {
@@ -85,7 +99,8 @@ class ApiService {
           }
         }
       } else {
-        throw Exception('Unexpected response format: ${responseData.runtimeType}');
+        throw ServerException(
+            'Unexpected response format: ${responseData.runtimeType}');
       }
 
       return jobsArray
@@ -95,20 +110,23 @@ class ApiService {
           .cast<Job>()
           .toList();
     } catch (e) {
-      throw Exception('Failed to parse jobs response: $e');
+      if (e is ApiException) rethrow;
+      throw ServerException('Failed to parse jobs response: $e');
     }
   }
 
   Job? _parseJobJson(Map<String, dynamic> json) {
     try {
       final jobData = <String, dynamic>{};
-      
-      jobData['id'] = json['id']?.toString() ?? DateTime.now().millisecondsSinceEpoch.toString();
+
+      jobData['id'] = json['id']?.toString() ?? _uuid.v4();
       jobData['title'] = json['title']?.toString() ?? 'No Title';
       jobData['description'] = json['description']?.toString() ?? '';
-      jobData['applyUrl'] = json['applyUrl']?.toString() ?? json['apply_url']?.toString();
-      jobData['isRemote'] = json['isRemote'] ?? json['is_remote'] ?? json['remote'] ?? false;
-      
+      jobData['applyUrl'] =
+          json['applyUrl']?.toString() ?? json['apply_url']?.toString();
+      jobData['isRemote'] =
+          json['isRemote'] ?? json['is_remote'] ?? json['remote'] ?? false;
+
       if (json['company'] is Map<String, dynamic>) {
         jobData['company'] = json['company'];
       } else if (json['company'] is String) {
@@ -120,7 +138,8 @@ class ApiService {
         };
       } else {
         jobData['company'] = {
-          'name': json['company_name'] ?? json['companyName'] ?? 'Unknown Company',
+          'name':
+              json['company_name'] ?? json['companyName'] ?? 'Unknown Company',
           'image': json['company_logo'] ?? json['companyLogo'],
           'industry': json['industry'],
           'website': json['company_website'] ?? json['companyWebsite'],
@@ -131,10 +150,10 @@ class ApiService {
         jobData['location'] = json['location'];
       } else {
         jobData['location'] = {
-          'formatted': json['location']?.toString() ?? 
-                       json['location_name']?.toString() ?? 
-                       json['locationName']?.toString() ?? 
-                       'Remote',
+          'formatted': json['location']?.toString() ??
+              json['location_name']?.toString() ??
+              json['locationName']?.toString() ??
+              'Remote',
         };
       }
 
@@ -146,9 +165,9 @@ class ApiService {
         jobData['perks'] = <String>[];
       }
 
-      jobData['applicationFormEase'] = json['applicationFormEase'] ?? 
-                                      json['application_form_ease'] ?? 
-                                      json['applicationEase'];
+      jobData['applicationFormEase'] = json['applicationFormEase'] ??
+          json['application_form_ease'] ??
+          json['applicationEase'];
 
       return Job.fromJson(jobData);
     } catch (e) {
@@ -162,7 +181,7 @@ class ApiService {
     }
 
     final normalizedQuery = query.trim().toLowerCase();
-    
+
     if (_locationCache.containsKey(normalizedQuery)) {
       return _locationCache[normalizedQuery]!;
     }
@@ -195,14 +214,16 @@ class ApiService {
         _cacheLocationQuery(normalizedQuery, locations);
         return locations;
       } else {
-        throw Exception(
+        throw ServerException(
           'API Error: Status ${response.statusCode}, Body: ${response.data}',
+          statusCode: response.statusCode,
         );
       }
     } on DioException catch (e) {
-      throw Exception('Network Error: ${e.message}');
+      throw NetworkException('Network Error: ${e.message}');
     } catch (e) {
-      throw Exception('An unexpected error occurred: $e');
+      if (e is ApiException) rethrow;
+      throw ServerException('An unexpected error occurred: $e');
     }
   }
 
@@ -240,18 +261,18 @@ class ApiService {
           return [];
         }
 
-        return departmentsData
-            .whereType<String>()
-            .toList();
+        return departmentsData.whereType<String>().toList();
       } else {
-        throw Exception(
+        throw ServerException(
           'API Error: Status ${response.statusCode}, Body: ${response.data}',
+          statusCode: response.statusCode,
         );
       }
     } on DioException catch (e) {
-      throw Exception('Network Error: ${e.message}');
+      throw NetworkException('Network Error: ${e.message}');
     } catch (e) {
-      throw Exception('An unexpected error occurred: $e');
+      if (e is ApiException) rethrow;
+      throw ServerException('An unexpected error occurred: $e');
     }
   }
 
@@ -281,18 +302,18 @@ class ApiService {
           return [];
         }
 
-        return industriesData
-            .whereType<String>()
-            .toList();
+        return industriesData.whereType<String>().toList();
       } else {
-        throw Exception(
+        throw ServerException(
           'API Error: Status ${response.statusCode}, Body: ${response.data}',
+          statusCode: response.statusCode,
         );
       }
     } on DioException catch (e) {
-      throw Exception('Network Error: ${e.message}');
+      throw NetworkException('Network Error: ${e.message}');
     } catch (e) {
-      throw Exception('An unexpected error occurred: $e');
+      if (e is ApiException) rethrow;
+      throw ServerException('An unexpected error occurred: $e');
     }
   }
 }
