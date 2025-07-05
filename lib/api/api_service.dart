@@ -32,16 +32,41 @@ class ApiService {
         queryParameters.addAll(filters.toQueryParameters());
       }
 
-      final Response<Map<String, dynamic>> response =
-          await _dio.get<Map<String, dynamic>>(
+      final Response<dynamic> response = await _dio.get<dynamic>(
         '$_baseUrl/search-jobs',
         queryParameters: queryParameters,
       );
 
       if (response.statusCode == 200 && response.data != null) {
-        final List<dynamic> jobList = response.data!['jobs'] as List<dynamic>;
+        final dynamic responseData = response.data;
+
+        if (responseData is! Map<String, dynamic>) {
+          throw Exception(
+              'Invalid response format: expected Map, got ${responseData.runtimeType}',);
+        }
+
+        final Map<String, dynamic> dataMap = responseData;
+
+        if (!dataMap.containsKey('jobs')) {
+          return [];
+        }
+
+        final dynamic jobsData = dataMap['jobs'];
+
+        if (jobsData == null) {
+          return [];
+        }
+
+        if (jobsData is! List) {
+          throw Exception(
+              'Invalid jobs format: expected List, got ${jobsData.runtimeType}',);
+        }
+
+        final List<dynamic> jobList = jobsData;
+
         return jobList
-            .map((json) => Job.fromJson(json as Map<String, dynamic>))
+            .whereType<Map<String, dynamic>>()
+            .map((json) => Job.fromJson(json))
             .toList();
       } else {
         throw Exception(
@@ -49,7 +74,13 @@ class ApiService {
         );
       }
     } on DioException catch (e) {
-      throw Exception('Network Error: ${e.message}');
+      if (e.response?.statusCode == 429) {
+        throw Exception('Rate limit exceeded. Please try again later.');
+      } else if (e.response?.statusCode == 401) {
+        throw Exception('API authentication failed. Please check API key.');
+      } else {
+        throw Exception('Network Error: ${e.message}');
+      }
     } catch (e) {
       throw Exception('An unexpected error occurred: $e');
     }
@@ -62,16 +93,29 @@ class ApiService {
         queryParameters['query'] = query;
       }
 
-      final Response<Map<String, dynamic>> response =
-          await _dio.get<Map<String, dynamic>>(
+      final Response<dynamic> response = await _dio.get<dynamic>(
         '$_baseUrl/get-departments',
         queryParameters: queryParameters,
       );
 
       if (response.statusCode == 200 && response.data != null) {
-        final List<dynamic> departments =
-            response.data!['departments'] as List<dynamic>;
-        return departments.cast<String>();
+        final dynamic responseData = response.data;
+
+        if (responseData is! Map<String, dynamic>) {
+          return [];
+        }
+
+        final Map<String, dynamic> dataMap = responseData;
+        final dynamic departmentsData = dataMap['departments'];
+
+        if (departmentsData is! List) {
+          return [];
+        }
+
+        return (departmentsData)
+            .whereType<String>()
+            .cast<String>()
+            .toList();
       } else {
         throw Exception(
           'API Error: Status ${response.statusCode}, Body: ${response.data}',
@@ -91,16 +135,29 @@ class ApiService {
         queryParameters['query'] = query;
       }
 
-      final Response<Map<String, dynamic>> response =
-          await _dio.get<Map<String, dynamic>>(
+      final Response<dynamic> response = await _dio.get<dynamic>(
         '$_baseUrl/get-industries',
         queryParameters: queryParameters,
       );
 
       if (response.statusCode == 200 && response.data != null) {
-        final List<dynamic> industries =
-            response.data!['industries'] as List<dynamic>;
-        return industries.cast<String>();
+        final dynamic responseData = response.data;
+
+        if (responseData is! Map<String, dynamic>) {
+          return [];
+        }
+
+        final Map<String, dynamic> dataMap = responseData;
+        final dynamic industriesData = dataMap['result'];
+
+        if (industriesData is! List) {
+          return [];
+        }
+
+        return (industriesData)
+            .whereType<String>()
+            .cast<String>()
+            .toList();
       } else {
         throw Exception(
           'API Error: Status ${response.statusCode}, Body: ${response.data}',
