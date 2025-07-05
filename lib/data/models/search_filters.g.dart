@@ -34,6 +34,10 @@ SearchFilters _$SearchFiltersFromJson(Map<String, dynamic> json) =>
       sortBy: json['sortBy'] as String?,
       size: (json['size'] as num?)?.toInt(),
       page: (json['page'] as num?)?.toInt(),
+      restrictTransparent: json['restrictTransparent'] as bool? ?? false,
+      minPay: (json['minPay'] as num?)?.toDouble(),
+      maxPay: (json['maxPay'] as num?)?.toDouble(),
+      frequency: json['frequency'] as String?,
     );
 
 Map<String, dynamic> _$SearchFiltersToJson(SearchFilters instance) =>
@@ -54,4 +58,8 @@ Map<String, dynamic> _$SearchFiltersToJson(SearchFilters instance) =>
       'sortBy': instance.sortBy,
       'size': instance.size,
       'page': instance.page,
+      'restrictTransparent': instance.restrictTransparent,
+      'minPay': instance.minPay,
+      'maxPay': instance.maxPay,
+      'frequency': instance.frequency,
     };

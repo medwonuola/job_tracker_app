@@ -20,6 +20,10 @@ class SearchFilters {
   final String? sortBy;
   final int? size;
   final int? page;
+  final bool restrictTransparent;
+  final double? minPay;
+  final double? maxPay;
+  final String? frequency;
 
   const SearchFilters({
     this.locationShort,
@@ -38,6 +42,10 @@ class SearchFilters {
     this.sortBy,
     this.size,
     this.page,
+    this.restrictTransparent = false,
+    this.minPay,
+    this.maxPay,
+    this.frequency,
   });
 
   factory SearchFilters.fromJson(Map<String, dynamic> json) =>
@@ -62,6 +70,10 @@ class SearchFilters {
     String? sortBy,
     int? size,
     int? page,
+    bool? restrictTransparent,
+    double? minPay,
+    double? maxPay,
+    String? frequency,
   }) {
     return SearchFilters(
       locationShort: locationShort ?? this.locationShort,
@@ -80,6 +92,10 @@ class SearchFilters {
       sortBy: sortBy ?? this.sortBy,
       size: size ?? this.size,
       page: page ?? this.page,
+      restrictTransparent: restrictTransparent ?? this.restrictTransparent,
+      minPay: minPay ?? this.minPay,
+      maxPay: maxPay ?? this.maxPay,
+      frequency: frequency ?? this.frequency,
     );
   }
 
@@ -112,6 +128,17 @@ class SearchFilters {
     if (sortBy != null) params['sortBy'] = sortBy;
     if (size != null) params['size'] = size.toString();
     if (page != null) params['page'] = page.toString();
+    
+    if (restrictTransparent) {
+      params['restrictJobsToTransparentSalaries'] = 'true';
+    }
+    if (minPay != null) {
+      params['minCompensationLowEnd'] = minPay!.round().toString();
+    }
+    if (maxPay != null) {
+      params['maxCompensationHighEnd'] = maxPay!.round().toString();
+    }
+    if (frequency != null) params['calcFrequency'] = frequency;
 
     return params;
   }
@@ -130,6 +157,10 @@ class SearchFilters {
         salaryMax == null &&
         salaryCurrency == null &&
         salaryFrequency == null &&
-        sortBy == null;
+        sortBy == null &&
+        !restrictTransparent &&
+        minPay == null &&
+        maxPay == null &&
+        frequency == null;
   }
 }

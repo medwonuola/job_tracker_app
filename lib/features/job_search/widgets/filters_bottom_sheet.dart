@@ -3,6 +3,7 @@ import 'package:job_tracker_app/api/api_service.dart';
 import 'package:job_tracker_app/core/theme/app_colors.dart';
 import 'package:job_tracker_app/core/theme/app_spacing.dart';
 import 'package:job_tracker_app/core/utils/debouncer.dart';
+import 'package:job_tracker_app/core/utils/throttler.dart';
 import 'package:job_tracker_app/core/widgets/context_button.dart';
 import 'package:job_tracker_app/data/models/search_filters.dart';
 import 'package:job_tracker_app/data/providers/job_search_provider.dart';
@@ -20,6 +21,7 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
   final ApiService _apiService = ApiService();
   final Debouncer _departmentDebouncer = Debouncer(delay: const Duration(milliseconds: 250));
   final Debouncer _industryDebouncer = Debouncer(delay: const Duration(milliseconds: 250));
+  final Throttler _salaryThrottler = Throttler(delay: const Duration(milliseconds: 300));
   
   List<String> _availableDepartments = [];
   List<String> _availableIndustries = [];
@@ -30,6 +32,7 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
   final List<String> _commitmentTypes = ['Full-time', 'Part-time', 'Contract', 'Internship'];
   final List<String> _seniorityLevels = ['Internship', 'Entry level', 'Associate', 'Mid-Senior level', 'Director', 'Executive'];
   final List<String> _sortOptions = ['Date', 'Relevance', 'Salary'];
+  final List<String> _frequencyOptions = ['Yearly', 'Monthly'];
 
   @override
   void initState() {
@@ -43,6 +46,7 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
   void dispose() {
     _departmentDebouncer.dispose();
     _industryDebouncer.dispose();
+    _salaryThrottler.dispose();
     super.dispose();
   }
 
@@ -194,8 +198,8 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
                     ),
                   ),
                   _buildSection(
-                    'Salary Range',
-                    _buildSalarySection(),
+                    'Salary Transparency',
+                    _buildTransparentSalarySection(),
                   ),
                   _buildSection(
                     'Sort By',
@@ -362,43 +366,78 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
     );
   }
 
-  Widget _buildSalarySection() {
+  Widget _buildTransparentSalarySection() {
+    final currentMin = _filters.minPay ?? 0.0;
+    final currentMax = _filters.maxPay ?? 400000.0;
+    final frequency = _filters.frequency ?? 'Yearly';
+
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                decoration: const InputDecoration(
-                  labelText: 'Min Salary',
-                  prefixText: '\$',
-                ),
-                keyboardType: TextInputType.number,
-                onChanged: (value) {
-                  final salary = int.tryParse(value);
-                  setState(() {
-                    _filters = _filters.copyWith(salaryMin: salary);
-                  });
-                },
-              ),
-            ),
-            const SizedBox(width: ContextSpacing.md),
-            Expanded(
-              child: TextField(
-                decoration: const InputDecoration(
-                  labelText: 'Max Salary',
-                  prefixText: '\$',
-                ),
-                keyboardType: TextInputType.number,
-                onChanged: (value) {
-                  final salary = int.tryParse(value);
-                  setState(() {
-                    _filters = _filters.copyWith(salaryMax: salary);
-                  });
-                },
-              ),
-            ),
-          ],
+        SwitchListTile(
+          title: const Text('Only show jobs with published salary'),
+          value: _filters.restrictTransparent,
+          onChanged: (value) {
+            setState(() {
+              _filters = _filters.copyWith(restrictTransparent: value);
+            });
+          },
+          contentPadding: EdgeInsets.zero,
+          activeColor: ContextColors.accent,
+        ),
+        const SizedBox(height: ContextSpacing.md),
+        DropdownButtonFormField<String>(
+          decoration: const InputDecoration(
+            labelText: 'Frequency',
+          ),
+          value: frequency,
+          items: _frequencyOptions.map((String option) {
+            return DropdownMenuItem<String>(
+              value: option,
+              child: Text(option),
+            );
+          }).toList(),
+          onChanged: (String? newValue) {
+            if (newValue != null) {
+              setState(() {
+                _filters = _filters.copyWith(frequency: newValue);
+              });
+            }
+          },
+        ),
+        const SizedBox(height: ContextSpacing.md),
+        Text(
+          'Salary Range: \$${currentMin.round().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')} - \$${currentMax.round().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        const SizedBox(height: ContextSpacing.sm),
+        RangeSlider(
+          values: RangeValues(currentMin, currentMax),
+          min: 0.0,
+          max: 400000.0,
+          divisions: 80,
+          labels: RangeLabels(
+            '\$${(currentMin / 1000).round()}k',
+            '\$${(currentMax / 1000).round()}k',
+          ),
+          onChanged: (RangeValues values) {
+            _salaryThrottler(() {
+              final minVal = values.start;
+              final maxVal = values.end;
+              
+              final correctedMin = minVal <= maxVal ? minVal : maxVal;
+              final correctedMax = minVal <= maxVal ? maxVal : minVal;
+              
+              setState(() {
+                _filters = _filters.copyWith(
+                  minPay: correctedMin,
+                  maxPay: correctedMax,
+                );
+              });
+            });
+          },
+          activeColor: ContextColors.accent,
+          inactiveColor: ContextColors.border,
         ),
       ],
     );
