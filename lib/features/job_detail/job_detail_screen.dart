@@ -4,6 +4,7 @@ import 'package:job_tracker_app/core/theme/app_colors.dart';
 import 'package:job_tracker_app/core/theme/app_spacing.dart';
 import 'package:job_tracker_app/core/utils/url_launcher.dart';
 import 'package:job_tracker_app/core/widgets/context_button.dart';
+import 'package:job_tracker_app/core/widgets/quick_apply_badge.dart';
 import 'package:job_tracker_app/data/models/job.dart';
 import 'package:job_tracker_app/data/providers/application_tracker_provider.dart';
 import 'package:job_tracker_app/features/job_detail/widgets/job_perks_row.dart';
@@ -43,9 +44,16 @@ class JobDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              job.title,
-              style: textTheme.displaySmall,
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    job.title,
+                    style: textTheme.displaySmall,
+                  ),
+                ),
+                if (job.isQuickApply) const QuickApplyBadge(showText: true),
+              ],
             ),
             const SizedBox(height: ContextSpacing.sm),
             Text(
@@ -90,9 +98,45 @@ class JobDetailScreen extends StatelessWidget {
       bottomNavigationBar: job.applyUrl != null && job.applyUrl!.isNotEmpty
           ? Padding(
               padding: const EdgeInsets.all(ContextSpacing.md),
-              child: ContextButton(
-                label: 'Apply Now',
-                onPressed: () => AppUrlLauncher.launch(job.applyUrl!),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (job.isQuickApply)
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(ContextSpacing.sm),
+                      margin: const EdgeInsets.only(bottom: ContextSpacing.sm),
+                      decoration: BoxDecoration(
+                        color: ContextColors.accent.withAlpha(38),
+                        border: Border.all(
+                          color: ContextColors.accent,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.flash_on,
+                            color: ContextColors.textPrimary,
+                            size: 16,
+                          ),
+                          const SizedBox(width: ContextSpacing.xs),
+                          Text(
+                            'This company uses a short application form',
+                            style: textTheme.bodySmall?.copyWith(
+                              color: ContextColors.textPrimary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ContextButton(
+                    label: 'Apply Now',
+                    onPressed: () => AppUrlLauncher.launch(job.applyUrl!),
+                  ),
+                ],
               ),
             )
           : null,

@@ -23,6 +23,7 @@ class Job {
   final JobLocation location;
   @JsonKey(defaultValue: <String>[])
   final List<String> perks;
+  final String? applicationFormEase;
 
   @JsonKey(fromJson: _statusFromJson, defaultValue: ApplicationStatus.saved)
   ApplicationStatus status;
@@ -36,8 +37,11 @@ class Job {
     required this.company,
     required this.location,
     this.perks = const <String>[],
+    this.applicationFormEase,
     this.status = ApplicationStatus.saved,
   });
+
+  bool get isQuickApply => applicationFormEase == 'Simple';
 
   factory Job.fromJson(Map<String, dynamic> json) => _$JobFromJson(json);
   Map<String, dynamic> toJson() => _$JobToJson(this);

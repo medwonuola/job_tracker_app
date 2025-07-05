@@ -25,6 +25,7 @@ class SearchFilters {
   final double? maxPay;
   final String? frequency;
   final Set<String>? perks;
+  final bool quickApplyOnly;
 
   const SearchFilters({
     this.locationShort,
@@ -48,6 +49,7 @@ class SearchFilters {
     this.maxPay,
     this.frequency,
     this.perks,
+    this.quickApplyOnly = false,
   });
 
   factory SearchFilters.fromJson(Map<String, dynamic> json) =>
@@ -77,6 +79,7 @@ class SearchFilters {
     double? maxPay,
     String? frequency,
     Set<String>? perks,
+    bool? quickApplyOnly,
   }) {
     return SearchFilters(
       locationShort: locationShort ?? this.locationShort,
@@ -100,6 +103,7 @@ class SearchFilters {
       maxPay: maxPay ?? this.maxPay,
       frequency: frequency ?? this.frequency,
       perks: perks ?? this.perks,
+      quickApplyOnly: quickApplyOnly ?? this.quickApplyOnly,
     );
   }
 
@@ -146,6 +150,9 @@ class SearchFilters {
     if (perks?.isNotEmpty ?? false) {
       params['benefitsAndPerks'] = perks!.join(',');
     }
+    if (quickApplyOnly) {
+      params['applicationFormEase'] = 'Simple';
+    }
 
     return params;
   }
@@ -169,6 +176,7 @@ class SearchFilters {
         minPay == null &&
         maxPay == null &&
         frequency == null &&
-        (perks?.isEmpty ?? true);
+        (perks?.isEmpty ?? true) &&
+        !quickApplyOnly;
   }
 }

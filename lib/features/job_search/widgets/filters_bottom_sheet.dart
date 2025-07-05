@@ -155,6 +155,10 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildSection(
+                    'Application Type',
+                    _buildQuickApplySection(),
+                  ),
+                  _buildSection(
                     'Workplace Type',
                     _buildChipGroup(
                       _workplaceTypes,
@@ -278,6 +282,31 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
         content,
         const SizedBox(height: ContextSpacing.lg),
       ],
+    );
+  }
+
+  Widget _buildQuickApplySection() {
+    return SwitchListTile(
+      title: Row(
+        children: const [
+          Icon(
+            Icons.flash_on,
+            color: ContextColors.textPrimary,
+            size: 20,
+          ),
+          SizedBox(width: ContextSpacing.xs),
+          Text('Quick Apply Only'),
+        ],
+      ),
+      subtitle: const Text('Show only jobs with simple application forms'),
+      value: _filters.quickApplyOnly,
+      onChanged: (value) {
+        setState(() {
+          _filters = _filters.copyWith(quickApplyOnly: value);
+        });
+      },
+      contentPadding: EdgeInsets.zero,
+      activeColor: ContextColors.accent,
     );
   }
 
@@ -473,7 +502,6 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
         const SizedBox(height: ContextSpacing.sm),
         RangeSlider(
           values: RangeValues(currentMin, currentMax),
-          min: 0.0,
           max: 400000.0,
           divisions: 80,
           labels: RangeLabels(

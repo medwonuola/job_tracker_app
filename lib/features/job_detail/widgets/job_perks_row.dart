@@ -60,7 +60,6 @@ class JobPerksRow extends StatelessWidget {
                 color: ContextColors.accent.withAlpha(38),
                 border: Border.all(
                   color: ContextColors.accent,
-                  width: 1.0,
                 ),
                 borderRadius: BorderRadius.circular(20),
               ),
