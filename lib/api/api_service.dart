@@ -38,36 +38,7 @@ class ApiService {
       );
 
       if (response.statusCode == 200 && response.data != null) {
-        final dynamic responseData = response.data;
-
-        if (responseData is! Map<String, dynamic>) {
-          throw Exception(
-              'Invalid response format: expected Map, got ${responseData.runtimeType}',);
-        }
-
-        final Map<String, dynamic> dataMap = responseData;
-
-        if (!dataMap.containsKey('jobs')) {
-          return [];
-        }
-
-        final dynamic jobsData = dataMap['jobs'];
-
-        if (jobsData == null) {
-          return [];
-        }
-
-        if (jobsData is! List) {
-          throw Exception(
-              'Invalid jobs format: expected List, got ${jobsData.runtimeType}',);
-        }
-
-        final List<dynamic> jobList = jobsData;
-
-        return jobList
-            .whereType<Map<String, dynamic>>()
-            .map((json) => Job.fromJson(json))
-            .toList();
+        return _parseJobsResponse(response.data);
       } else {
         throw Exception(
           'API Error: Status ${response.statusCode}, Body: ${response.data}',
@@ -83,6 +54,101 @@ class ApiService {
       }
     } catch (e) {
       throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  List<Job> _parseJobsResponse(dynamic responseData) {
+    try {
+      List<dynamic> jobsArray;
+
+      if (responseData is List) {
+        jobsArray = responseData;
+      } else if (responseData is Map<String, dynamic>) {
+        final dataMap = responseData;
+        
+        if (dataMap.containsKey('jobs') && dataMap['jobs'] is List) {
+          jobsArray = dataMap['jobs'] as List<dynamic>;
+        } else if (dataMap.containsKey('data') && dataMap['data'] is List) {
+          jobsArray = dataMap['data'] as List<dynamic>;
+        } else if (dataMap.containsKey('results') && dataMap['results'] is List) {
+          jobsArray = dataMap['results'] as List<dynamic>;
+        } else {
+          final possibleArrays = dataMap.values.where((value) => value is List).toList();
+          if (possibleArrays.isNotEmpty) {
+            jobsArray = possibleArrays.first as List<dynamic>;
+          } else {
+            return [];
+          }
+        }
+      } else {
+        throw Exception('Unexpected response format: ${responseData.runtimeType}');
+      }
+
+      return jobsArray
+          .whereType<Map<String, dynamic>>()
+          .map((json) => _parseJobJson(json))
+          .where((job) => job != null)
+          .cast<Job>()
+          .toList();
+    } catch (e) {
+      throw Exception('Failed to parse jobs response: $e');
+    }
+  }
+
+  Job? _parseJobJson(Map<String, dynamic> json) {
+    try {
+      final jobData = <String, dynamic>{};
+      
+      jobData['id'] = json['id']?.toString() ?? DateTime.now().millisecondsSinceEpoch.toString();
+      jobData['title'] = json['title']?.toString() ?? 'No Title';
+      jobData['description'] = json['description']?.toString() ?? '';
+      jobData['applyUrl'] = json['applyUrl']?.toString() ?? json['apply_url']?.toString();
+      jobData['isRemote'] = json['isRemote'] ?? json['is_remote'] ?? json['remote'] ?? false;
+      
+      if (json['company'] is Map<String, dynamic>) {
+        jobData['company'] = json['company'];
+      } else if (json['company'] is String) {
+        jobData['company'] = {
+          'name': json['company'],
+          'image': json['company_logo'] ?? json['companyLogo'],
+          'industry': json['industry'],
+          'website': json['company_website'] ?? json['companyWebsite'],
+        };
+      } else {
+        jobData['company'] = {
+          'name': json['company_name'] ?? json['companyName'] ?? 'Unknown Company',
+          'image': json['company_logo'] ?? json['companyLogo'],
+          'industry': json['industry'],
+          'website': json['company_website'] ?? json['companyWebsite'],
+        };
+      }
+
+      if (json['location'] is Map<String, dynamic>) {
+        jobData['location'] = json['location'];
+      } else {
+        jobData['location'] = {
+          'formatted': json['location']?.toString() ?? 
+                       json['location_name']?.toString() ?? 
+                       json['locationName']?.toString() ?? 
+                       'Remote',
+        };
+      }
+
+      if (json['perks'] is List) {
+        jobData['perks'] = json['perks'];
+      } else if (json['benefits'] is List) {
+        jobData['perks'] = json['benefits'];
+      } else {
+        jobData['perks'] = <String>[];
+      }
+
+      jobData['applicationFormEase'] = json['applicationFormEase'] ?? 
+                                      json['application_form_ease'] ?? 
+                                      json['applicationEase'];
+
+      return Job.fromJson(jobData);
+    } catch (e) {
+      return null;
     }
   }
 
