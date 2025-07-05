@@ -6,6 +6,7 @@ import 'package:job_tracker_app/core/utils/url_launcher.dart';
 import 'package:job_tracker_app/core/widgets/context_button.dart';
 import 'package:job_tracker_app/data/models/job.dart';
 import 'package:job_tracker_app/data/providers/application_tracker_provider.dart';
+import 'package:job_tracker_app/features/job_detail/widgets/job_perks_row.dart';
 import 'package:provider/provider.dart';
 
 class JobDetailScreen extends StatelessWidget {
@@ -67,6 +68,8 @@ class JobDetailScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: ContextSpacing.lg),
+            JobPerksRow(perks: job.perks),
+            if (job.perks.isNotEmpty) const SizedBox(height: ContextSpacing.lg),
             const Divider(),
             const SizedBox(height: ContextSpacing.lg),
             Html(

@@ -14,6 +14,9 @@ Job _$JobFromJson(Map<String, dynamic> json) => Job(
       isRemote: json['isRemote'] as bool? ?? false,
       company: Company.fromJson(json['company'] as Map<String, dynamic>),
       location: JobLocation.fromJson(json['location'] as Map<String, dynamic>),
+      perks:
+          (json['perks'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+              [],
       status: json['status'] == null
           ? ApplicationStatus.saved
           : _statusFromJson(json['status'] as String?),
@@ -27,6 +30,7 @@ Map<String, dynamic> _$JobToJson(Job instance) => <String, dynamic>{
       'isRemote': instance.isRemote,
       'company': instance.company.toJson(),
       'location': instance.location.toJson(),
+      'perks': instance.perks,
       'status': _$ApplicationStatusEnumMap[instance.status]!,
     };
 

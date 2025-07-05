@@ -33,6 +33,21 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
   final List<String> _seniorityLevels = ['Internship', 'Entry level', 'Associate', 'Mid-Senior level', 'Director', 'Executive'];
   final List<String> _sortOptions = ['Date', 'Relevance', 'Salary'];
   final List<String> _frequencyOptions = ['Yearly', 'Monthly'];
+  
+  final Map<String, IconData> _perksOptions = {
+    'Visa sponsorship': Icons.language,
+    '401k matching': Icons.savings,
+    '4-day work week': Icons.work_history,
+    'Generous PTO': Icons.beach_access,
+    'Parental leave': Icons.family_restroom,
+    'Tuition reimbursement': Icons.school,
+    'Health insurance': Icons.health_and_safety,
+    'Remote work': Icons.home,
+    'Flexible schedule': Icons.schedule,
+    'Stock options': Icons.trending_up,
+    'Gym membership': Icons.fitness_center,
+    'Free meals': Icons.restaurant,
+  };
 
   @override
   void initState() {
@@ -170,6 +185,10 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
                     ),
                   ),
                   _buildSection(
+                    'Benefits & Perks',
+                    _buildPerksSection(),
+                  ),
+                  _buildSection(
                     'Departments',
                     _buildAutocompleteSection(
                       _availableDepartments,
@@ -283,6 +302,47 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
               newSelected.remove(option);
             }
             onChanged(newSelected);
+          },
+          selectedColor: ContextColors.accent,
+          backgroundColor: ContextColors.background,
+          shape: const StadiumBorder(
+            side: BorderSide(color: ContextColors.border, width: 2),
+          ),
+          showCheckmark: false,
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildPerksSection() {
+    final selectedPerks = _filters.perks ?? <String>{};
+    
+    return Wrap(
+      spacing: ContextSpacing.sm,
+      runSpacing: ContextSpacing.sm,
+      children: _perksOptions.entries.map((entry) {
+        final perk = entry.key;
+        final icon = entry.value;
+        final isSelected = selectedPerks.contains(perk);
+        
+        return FilterChip(
+          avatar: Icon(
+            icon,
+            size: 18,
+            color: isSelected ? ContextColors.textPrimary : ContextColors.textSecondary,
+          ),
+          label: Text(perk),
+          selected: isSelected,
+          onSelected: (value) {
+            final newPerks = Set<String>.from(selectedPerks);
+            if (value) {
+              newPerks.add(perk);
+            } else {
+              newPerks.remove(perk);
+            }
+            setState(() {
+              _filters = _filters.copyWith(perks: newPerks);
+            });
           },
           selectedColor: ContextColors.accent,
           backgroundColor: ContextColors.background,

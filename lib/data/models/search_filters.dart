@@ -24,6 +24,7 @@ class SearchFilters {
   final double? minPay;
   final double? maxPay;
   final String? frequency;
+  final Set<String>? perks;
 
   const SearchFilters({
     this.locationShort,
@@ -46,6 +47,7 @@ class SearchFilters {
     this.minPay,
     this.maxPay,
     this.frequency,
+    this.perks,
   });
 
   factory SearchFilters.fromJson(Map<String, dynamic> json) =>
@@ -74,6 +76,7 @@ class SearchFilters {
     double? minPay,
     double? maxPay,
     String? frequency,
+    Set<String>? perks,
   }) {
     return SearchFilters(
       locationShort: locationShort ?? this.locationShort,
@@ -96,6 +99,7 @@ class SearchFilters {
       minPay: minPay ?? this.minPay,
       maxPay: maxPay ?? this.maxPay,
       frequency: frequency ?? this.frequency,
+      perks: perks ?? this.perks,
     );
   }
 
@@ -139,6 +143,9 @@ class SearchFilters {
       params['maxCompensationHighEnd'] = maxPay!.round().toString();
     }
     if (frequency != null) params['calcFrequency'] = frequency;
+    if (perks?.isNotEmpty ?? false) {
+      params['benefitsAndPerks'] = perks!.join(',');
+    }
 
     return params;
   }
@@ -161,6 +168,7 @@ class SearchFilters {
         !restrictTransparent &&
         minPay == null &&
         maxPay == null &&
-        frequency == null;
+        frequency == null &&
+        (perks?.isEmpty ?? true);
   }
 }

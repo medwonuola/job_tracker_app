@@ -38,6 +38,7 @@ SearchFilters _$SearchFiltersFromJson(Map<String, dynamic> json) =>
       minPay: (json['minPay'] as num?)?.toDouble(),
       maxPay: (json['maxPay'] as num?)?.toDouble(),
       frequency: json['frequency'] as String?,
+      perks: (json['perks'] as List<dynamic>?)?.map((e) => e as String).toSet(),
     );
 
 Map<String, dynamic> _$SearchFiltersToJson(SearchFilters instance) =>
@@ -62,4 +63,5 @@ Map<String, dynamic> _$SearchFiltersToJson(SearchFilters instance) =>
       'minPay': instance.minPay,
       'maxPay': instance.maxPay,
       'frequency': instance.frequency,
+      'perks': instance.perks?.toList(),
     };

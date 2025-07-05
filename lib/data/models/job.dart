@@ -21,6 +21,8 @@ class Job {
   final bool isRemote;
   final Company company;
   final JobLocation location;
+  @JsonKey(defaultValue: <String>[])
+  final List<String> perks;
 
   @JsonKey(fromJson: _statusFromJson, defaultValue: ApplicationStatus.saved)
   ApplicationStatus status;
@@ -33,6 +35,7 @@ class Job {
     required this.isRemote,
     required this.company,
     required this.location,
+    this.perks = const <String>[],
     this.status = ApplicationStatus.saved,
   });
 
