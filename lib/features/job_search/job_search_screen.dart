@@ -5,6 +5,7 @@ import 'package:job_tracker_app/core/theme/app_typography.dart';
 import 'package:job_tracker_app/data/providers/job_search_provider.dart';
 import 'package:job_tracker_app/features/job_detail/job_detail_screen.dart';
 import 'package:job_tracker_app/features/job_search/widgets/job_list_item.dart';
+import 'package:job_tracker_app/features/job_search/widgets/filters_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
 class JobSearchScreen extends StatefulWidget {
@@ -25,6 +26,15 @@ class _JobSearchScreenState extends State<JobSearchScreen> {
     }
   }
 
+  void _showFilters() {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const FiltersBottomSheet(),
+    );
+  }
+
   @override
   void dispose() {
     _searchController.dispose();
@@ -41,22 +51,53 @@ class _JobSearchScreenState extends State<JobSearchScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.all(ContextSpacing.md),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'e.g., "Flutter Developer"',
-                suffixIcon: IconButton(
-                  icon: const Icon(
-                    Icons.search,
-                    color: ContextColors.textSecondary,
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: 'e.g., "Flutter Developer"',
+                      suffixIcon: IconButton(
+                        icon: const Icon(
+                          Icons.search,
+                          color: ContextColors.textSecondary,
+                        ),
+                        onPressed: _performSearch,
+                      ),
+                    ),
+                    onSubmitted: (_) => _performSearch(),
+                    textInputAction: TextInputAction.search,
+                    style: ContextTypography.bodyMd
+                        .copyWith(color: ContextColors.textPrimary),
                   ),
-                  onPressed: _performSearch,
                 ),
-              ),
-              onSubmitted: (_) => _performSearch(),
-              textInputAction: TextInputAction.search,
-              style: ContextTypography.bodyMd
-                  .copyWith(color: ContextColors.textPrimary),
+                const SizedBox(width: ContextSpacing.sm),
+                Consumer<JobSearchProvider>(
+                  builder: (context, provider, child) {
+                    return IconButton(
+                      onPressed: _showFilters,
+                      icon: Icon(
+                        Icons.tune,
+                        color: provider.hasActiveFilters
+                            ? ContextColors.accent
+                            : ContextColors.textSecondary,
+                      ),
+                      style: IconButton.styleFrom(
+                        backgroundColor: provider.hasActiveFilters
+                            ? ContextColors.accent.withAlpha(38)
+                            : null,
+                        shape: const RoundedRectangleBorder(
+                          side: BorderSide(
+                            color: ContextColors.border,
+                            width: 2.0,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
           ),
           Expanded(
