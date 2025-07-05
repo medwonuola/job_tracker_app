@@ -1,12 +1,16 @@
 import 'package:dio/dio.dart';
 import '../data/models/job.dart';
 import '../data/models/search_filters.dart';
+import '../data/models/location_suggestion.dart';
 
 class ApiService {
   final Dio _dio = Dio();
   static const String _baseUrl = 'https://hidden-job-board.p.rapidapi.com';
   static const String _apiKey =
       '0db1d88ad9msh5325755eeb1a162p11dd72jsn3298ebbfc37d';
+
+  final Map<String, List<LocationSuggestion>> _locationCache = {};
+  static const int _maxCacheEntries = 50;
 
   ApiService() {
     _dio.options.headers['X-RapidAPI-Key'] = _apiKey;
@@ -61,19 +65,19 @@ class ApiService {
     try {
       List<dynamic> jobsArray;
 
-      if (responseData is List) {
+      if (responseData is List<dynamic>) {
         jobsArray = responseData;
       } else if (responseData is Map<String, dynamic>) {
         final dataMap = responseData;
         
-        if (dataMap.containsKey('jobs') && dataMap['jobs'] is List) {
+        if (dataMap.containsKey('jobs') && dataMap['jobs'] is List<dynamic>) {
           jobsArray = dataMap['jobs'] as List<dynamic>;
-        } else if (dataMap.containsKey('data') && dataMap['data'] is List) {
+        } else if (dataMap.containsKey('data') && dataMap['data'] is List<dynamic>) {
           jobsArray = dataMap['data'] as List<dynamic>;
-        } else if (dataMap.containsKey('results') && dataMap['results'] is List) {
+        } else if (dataMap.containsKey('results') && dataMap['results'] is List<dynamic>) {
           jobsArray = dataMap['results'] as List<dynamic>;
         } else {
-          final possibleArrays = dataMap.values.whereType<List>().toList();
+          final possibleArrays = dataMap.values.whereType<List<dynamic>>().toList();
           if (possibleArrays.isNotEmpty) {
             jobsArray = possibleArrays.first;
           } else {
@@ -152,6 +156,64 @@ class ApiService {
     }
   }
 
+  Future<List<LocationSuggestion>> searchLocations({String? query}) async {
+    if (query == null || query.trim().isEmpty) {
+      return [];
+    }
+
+    final normalizedQuery = query.trim().toLowerCase();
+    
+    if (_locationCache.containsKey(normalizedQuery)) {
+      return _locationCache[normalizedQuery]!;
+    }
+
+    try {
+      final Response<dynamic> response = await _dio.get<dynamic>(
+        '$_baseUrl/search-location',
+        queryParameters: {'query': query},
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        final dynamic responseData = response.data;
+
+        if (responseData is! Map<String, dynamic>) {
+          return [];
+        }
+
+        final Map<String, dynamic> dataMap = responseData;
+        final dynamic locationsData = dataMap['locations'];
+
+        if (locationsData is! List<dynamic>) {
+          return [];
+        }
+
+        final locations = locationsData
+            .whereType<Map<String, dynamic>>()
+            .map((json) => LocationSuggestion.fromJson(json))
+            .toList();
+
+        _cacheLocationQuery(normalizedQuery, locations);
+        return locations;
+      } else {
+        throw Exception(
+          'API Error: Status ${response.statusCode}, Body: ${response.data}',
+        );
+      }
+    } on DioException catch (e) {
+      throw Exception('Network Error: ${e.message}');
+    } catch (e) {
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  void _cacheLocationQuery(String query, List<LocationSuggestion> locations) {
+    if (_locationCache.length >= _maxCacheEntries) {
+      final firstKey = _locationCache.keys.first;
+      _locationCache.remove(firstKey);
+    }
+    _locationCache[query] = locations;
+  }
+
   Future<List<String>> getDepartments({String? query}) async {
     try {
       final Map<String, dynamic> queryParameters = {};
@@ -178,9 +240,8 @@ class ApiService {
           return [];
         }
 
-        return (departmentsData)
+        return departmentsData
             .whereType<String>()
-            .cast<String>()
             .toList();
       } else {
         throw Exception(
@@ -220,9 +281,8 @@ class ApiService {
           return [];
         }
 
-        return (industriesData)
+        return industriesData
             .whereType<String>()
-            .cast<String>()
             .toList();
       } else {
         throw Exception(

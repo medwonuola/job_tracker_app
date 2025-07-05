@@ -83,7 +83,6 @@ class ApplicationStatusChart extends StatelessWidget {
     return nonZeroStatuses.asMap().entries.map((entry) {
       final index = entry.key;
       final statusEntry = entry.value;
-      final status = statusEntry.key;
       final count = statusEntry.value;
       final total = statusCounts.values.fold(0, (sum, count) => sum + count);
       final percentage = (count / total * 100).toInt();

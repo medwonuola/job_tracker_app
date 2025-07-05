@@ -6,6 +6,7 @@ import 'package:job_tracker_app/core/utils/debouncer.dart';
 import 'package:job_tracker_app/core/utils/throttler.dart';
 import 'package:job_tracker_app/core/widgets/context_button.dart';
 import 'package:job_tracker_app/data/models/search_filters.dart';
+import 'package:job_tracker_app/data/models/location_suggestion.dart';
 import 'package:job_tracker_app/data/providers/job_search_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -19,14 +20,19 @@ class FiltersBottomSheet extends StatefulWidget {
 class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
   late SearchFilters _filters;
   final ApiService _apiService = ApiService();
+  final Debouncer _locationDebouncer = Debouncer(delay: const Duration(milliseconds: 400));
   final Debouncer _departmentDebouncer = Debouncer(delay: const Duration(milliseconds: 250));
   final Debouncer _industryDebouncer = Debouncer(delay: const Duration(milliseconds: 250));
   final Throttler _salaryThrottler = Throttler(delay: const Duration(milliseconds: 300));
   
+  List<LocationSuggestion> _availableLocations = [];
   List<String> _availableDepartments = [];
   List<String> _availableIndustries = [];
+  bool _loadingLocations = false;
   bool _loadingDepartments = false;
   bool _loadingIndustries = false;
+  
+  LocationSuggestion? _selectedLocation;
 
   final List<String> _workplaceTypes = ['Remote', 'Hybrid', 'On-site'];
   final List<String> _commitmentTypes = ['Full-time', 'Part-time', 'Contract', 'Internship'];
@@ -55,14 +61,39 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
     _filters = Provider.of<JobSearchProvider>(context, listen: false).filters;
     _loadDepartments();
     _loadIndustries();
+    
+    if (_filters.locationShort != null) {
+      _selectedLocation = LocationSuggestion(
+        label: _filters.locationShort!,
+        value: _filters.locationShort!,
+      );
+    }
   }
 
   @override
   void dispose() {
+    _locationDebouncer.dispose();
     _departmentDebouncer.dispose();
     _industryDebouncer.dispose();
     _salaryThrottler.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadLocations([String? query]) async {
+    setState(() => _loadingLocations = true);
+    try {
+      final locations = await _apiService.searchLocations(query: query);
+      if (mounted) {
+        setState(() {
+          _availableLocations = locations;
+          _loadingLocations = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _loadingLocations = false);
+      }
+    }
   }
 
   Future<void> _loadDepartments([String? query]) async {
@@ -107,6 +138,7 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
   void _clearFilters() {
     setState(() {
       _filters = const SearchFilters();
+      _selectedLocation = null;
     });
     Provider.of<JobSearchProvider>(context, listen: false).clearFilters();
     Navigator.pop(context);
@@ -154,6 +186,10 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  _buildSection(
+                    'Location',
+                    _buildLocationSection(),
+                  ),
                   _buildSection(
                     'Application Type',
                     _buildQuickApplySection(),
@@ -285,10 +321,107 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
     );
   }
 
+  Widget _buildLocationSection() {
+    return Column(
+      children: [
+        TextField(
+          decoration: InputDecoration(
+            hintText: 'Search for a location...',
+            suffixIcon: _loadingLocations
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.search),
+          ),
+          onChanged: (query) {
+            if (query.isEmpty) {
+              setState(() {
+                _availableLocations = [];
+                _selectedLocation = null;
+                _filters = _filters.copyWith(
+                  
+                );
+              });
+              return;
+            }
+            _locationDebouncer(() => _loadLocations(query));
+          },
+        ),
+        const SizedBox(height: ContextSpacing.sm),
+        if (_selectedLocation != null)
+          Container(
+            padding: const EdgeInsets.all(ContextSpacing.sm),
+            decoration: BoxDecoration(
+              color: ContextColors.accent.withAlpha(38),
+              border: Border.all(color: ContextColors.accent),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.location_on, color: ContextColors.textPrimary),
+                const SizedBox(width: ContextSpacing.xs),
+                Expanded(
+                  child: Text(
+                    _selectedLocation!.label,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close, size: 18),
+                  onPressed: () {
+                    setState(() {
+                      _selectedLocation = null;
+                      _filters = _filters.copyWith(
+                        
+                      );
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+        if (_availableLocations.isNotEmpty && _selectedLocation == null)
+          Container(
+            height: 120,
+            margin: const EdgeInsets.only(top: ContextSpacing.sm),
+            decoration: BoxDecoration(
+              border: Border.all(color: ContextColors.border, width: 2),
+            ),
+            child: ListView.builder(
+              itemCount: _availableLocations.length,
+              itemBuilder: (context, index) {
+                final location = _availableLocations[index];
+                return ListTile(
+                  leading: const Icon(Icons.location_on),
+                  title: Text(location.label),
+                  onTap: () {
+                    setState(() {
+                      _selectedLocation = location;
+                      _filters = _filters.copyWith(
+                        locationShort: location.shortCode,
+                        locationLat: location.lat,
+                        locationLon: location.lon,
+                        region: 'anywhere_in_world',
+                      );
+                      _availableLocations = [];
+                    });
+                  },
+                );
+              },
+            ),
+          ),
+      ],
+    );
+  }
+
   Widget _buildQuickApplySection() {
     return SwitchListTile(
-      title: Row(
-        children: const [
+      title: const Row(
+        children: [
           Icon(
             Icons.flash_on,
             color: ContextColors.textPrimary,

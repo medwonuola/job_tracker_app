@@ -12,8 +12,6 @@ class StatsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Analytics'),
@@ -55,8 +53,6 @@ class StatsScreen extends StatelessWidget {
   }
 
   Widget _buildSummaryCards(BuildContext context, StatsData stats) {
-    final textTheme = Theme.of(context).textTheme;
-
     return Row(
       children: [
         Expanded(
