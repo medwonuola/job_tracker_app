@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:job_tracker_app/data/providers/application_tracker_provider.dart';
 import 'package:job_tracker_app/data/providers/job_search_provider.dart';
+import 'package:job_tracker_app/data/providers/stats_provider.dart';
 import 'package:job_tracker_app/features/home/home_screen.dart';
 import 'package:job_tracker_app/core/theme/app_theme.dart';
 import 'package:provider/provider.dart';
@@ -28,6 +29,11 @@ class ContextApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => JobSearchProvider()),
         ChangeNotifierProvider.value(value: applicationTrackerProvider),
+        ChangeNotifierProvider(
+          create: (context) => StatsProvider(
+            Provider.of<ApplicationTrackerProvider>(context, listen: false),
+          ),
+        ),
       ],
       child: MaterialApp(
         title: 'Context Job Tracker',

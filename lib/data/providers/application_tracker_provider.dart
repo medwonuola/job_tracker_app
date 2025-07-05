@@ -40,6 +40,10 @@ class ApplicationTrackerProvider with ChangeNotifier {
 
   Future<void> trackJob(Job job) async {
     if (isJobTracked(job.id)) return;
+    final now = DateTime.now();
+    job.createdAt = now;
+    job.lastStatusChange = now;
+    job.statusHistory[now.toIso8601String()] = job.status.name;
     _trackedJobs[job.id] = job;
     await _saveJobs();
     notifyListeners();
@@ -57,8 +61,28 @@ class ApplicationTrackerProvider with ChangeNotifier {
     ApplicationStatus newStatus,
   ) async {
     if (!_trackedJobs.containsKey(jobId)) return;
-    _trackedJobs[jobId]!.status = newStatus;
+    _trackedJobs[jobId]!.updateStatus(newStatus);
     await _saveJobs();
     notifyListeners();
+  }
+
+  List<Job> getJobsByStatus(ApplicationStatus status) {
+    return _trackedJobs.values.where((job) => job.status == status).toList();
+  }
+
+  Map<ApplicationStatus, int> getStatusCounts() {
+    final Map<ApplicationStatus, int> counts = {};
+    for (final status in ApplicationStatus.values) {
+      counts[status] = getJobsByStatus(status).length;
+    }
+    return counts;
+  }
+
+  List<Job> getJobsCreatedInDateRange(DateTime start, DateTime end) {
+    return _trackedJobs.values
+        .where((job) => 
+            job.createdAt.isAfter(start.subtract(const Duration(days: 1))) &&
+            job.createdAt.isBefore(end.add(const Duration(days: 1))),)
+        .toList();
   }
 }

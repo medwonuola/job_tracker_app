@@ -17,9 +17,16 @@ Job _$JobFromJson(Map<String, dynamic> json) => Job(
       perks:
           (json['perks'] as List<dynamic>?)?.map((e) => e as String).toList() ??
               [],
+      applicationFormEase: json['applicationFormEase'] as String?,
       status: json['status'] == null
           ? ApplicationStatus.saved
           : _statusFromJson(json['status'] as String?),
+      createdAt: _dateTimeFromJson(json['createdAt'] as String?),
+      lastStatusChange: _dateTimeFromJson(json['lastStatusChange'] as String?),
+      statusHistory: (json['statusHistory'] as Map<String, dynamic>?)?.map(
+            (k, e) => MapEntry(k, e as String),
+          ) ??
+          {},
     );
 
 Map<String, dynamic> _$JobToJson(Job instance) => <String, dynamic>{
@@ -31,7 +38,11 @@ Map<String, dynamic> _$JobToJson(Job instance) => <String, dynamic>{
       'company': instance.company.toJson(),
       'location': instance.location.toJson(),
       'perks': instance.perks,
+      'applicationFormEase': instance.applicationFormEase,
       'status': _$ApplicationStatusEnumMap[instance.status]!,
+      'createdAt': _dateTimeToJson(instance.createdAt),
+      'lastStatusChange': _dateTimeToJson(instance.lastStatusChange),
+      'statusHistory': instance.statusHistory,
     };
 
 const _$ApplicationStatusEnumMap = {

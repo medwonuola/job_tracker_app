@@ -73,9 +73,9 @@ class ApiService {
         } else if (dataMap.containsKey('results') && dataMap['results'] is List) {
           jobsArray = dataMap['results'] as List<dynamic>;
         } else {
-          final possibleArrays = dataMap.values.where((value) => value is List).toList();
+          final possibleArrays = dataMap.values.whereType<List>().toList();
           if (possibleArrays.isNotEmpty) {
-            jobsArray = possibleArrays.first as List<dynamic>;
+            jobsArray = possibleArrays.first;
           } else {
             return [];
           }

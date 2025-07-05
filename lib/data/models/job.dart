@@ -11,6 +11,13 @@ ApplicationStatus _statusFromJson(String? status) {
   );
 }
 
+DateTime _dateTimeFromJson(String? dateTime) {
+  if (dateTime == null) return DateTime.now();
+  return DateTime.tryParse(dateTime) ?? DateTime.now();
+}
+
+String _dateTimeToJson(DateTime dateTime) => dateTime.toIso8601String();
+
 @JsonSerializable(explicitToJson: true)
 class Job {
   final String id;
@@ -28,6 +35,15 @@ class Job {
   @JsonKey(fromJson: _statusFromJson, defaultValue: ApplicationStatus.saved)
   ApplicationStatus status;
 
+  @JsonKey(fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)
+  DateTime createdAt;
+
+  @JsonKey(fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)
+  DateTime lastStatusChange;
+
+  @JsonKey(defaultValue: <String, String>{})
+  Map<String, String> statusHistory;
+
   Job({
     required this.id,
     required this.title,
@@ -39,9 +55,43 @@ class Job {
     this.perks = const <String>[],
     this.applicationFormEase,
     this.status = ApplicationStatus.saved,
-  });
+    DateTime? createdAt,
+    DateTime? lastStatusChange,
+    this.statusHistory = const <String, String>{},
+  }) : createdAt = createdAt ?? DateTime.now(),
+       lastStatusChange = lastStatusChange ?? DateTime.now();
 
   bool get isQuickApply => applicationFormEase == 'Simple';
+
+  void updateStatus(ApplicationStatus newStatus) {
+    final now = DateTime.now();
+    statusHistory[now.toIso8601String()] = newStatus.name;
+    status = newStatus;
+    lastStatusChange = now;
+  }
+
+  int getDaysInStatus(ApplicationStatus targetStatus) {
+    final history = statusHistory.entries.toList()
+      ..sort((a, b) => a.key.compareTo(b.key));
+    
+    DateTime? statusStartTime;
+    DateTime? statusEndTime;
+    
+    for (int i = 0; i < history.length; i++) {
+      if (ApplicationStatus.values.firstWhere((e) => e.name == history[i].value) == targetStatus) {
+        statusStartTime = DateTime.parse(history[i].key);
+        statusEndTime = i < history.length - 1 
+          ? DateTime.parse(history[i + 1].key)
+          : (status == targetStatus ? DateTime.now() : null);
+        break;
+      }
+    }
+    
+    if (statusStartTime == null) return 0;
+    statusEndTime ??= DateTime.now();
+    
+    return statusEndTime.difference(statusStartTime).inDays;
+  }
 
   factory Job.fromJson(Map<String, dynamic> json) => _$JobFromJson(json);
   Map<String, dynamic> toJson() => _$JobToJson(this);

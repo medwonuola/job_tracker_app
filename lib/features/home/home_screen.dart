@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:job_tracker_app/features/job_search/job_search_screen.dart';
+import 'package:job_tracker_app/features/stats/stats_screen.dart';
 import 'package:job_tracker_app/features/tracker/tracker_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -16,6 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
   static const List<Widget> _screens = <Widget>[
     JobSearchScreen(),
     TrackerScreen(),
+    StatsScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -41,6 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         child: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(FlutterRemix.search_line, size: 28),
@@ -51,6 +54,11 @@ class _HomeScreenState extends State<HomeScreen> {
               icon: Icon(FlutterRemix.briefcase_line, size: 28),
               activeIcon: Icon(FlutterRemix.briefcase_fill, size: 28),
               label: 'Tracker',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(FlutterRemix.bar_chart_line, size: 28),
+              activeIcon: Icon(FlutterRemix.bar_chart_fill, size: 28),
+              label: 'Stats',
             ),
           ],
           currentIndex: _selectedIndex,
