@@ -2,76 +2,127 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/job.dart';
+import '../../core/constants/app_constants.dart';
 
 class ApplicationTrackerProvider with ChangeNotifier {
-  static const String _storageKey = 'tracked_jobs_map';
-
   Map<String, Job> _trackedJobs = {};
-  Map<String, Job> get trackedJobs => _trackedJobs;
+  Map<String, Job> get trackedJobs => Map.unmodifiable(_trackedJobs);
+
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
+  bool _disposed = false;
 
   ApplicationTrackerProvider();
 
   bool isJobTracked(String jobId) => _trackedJobs.containsKey(jobId);
 
   Future<void> loadTrackedJobs() async {
-    final prefs = await SharedPreferences.getInstance();
-    final String? jobsJsonString = prefs.getString(_storageKey);
+    if (_disposed) return;
 
-    if (jobsJsonString != null && jobsJsonString.isNotEmpty) {
-      final Map<String, dynamic> decodedMap =
-          json.decode(jobsJsonString) as Map<String, dynamic>;
-      _trackedJobs = decodedMap.map(
-        (key, value) =>
-            MapEntry(key, Job.fromJson(value as Map<String, dynamic>)),
-      );
-    } else {
+    _setLoading(true);
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final jobsJsonString = prefs.getString(AppConstants.storageKeyTrackedJobs);
+
+      if (jobsJsonString != null && jobsJsonString.isNotEmpty) {
+        final decodedMap = json.decode(jobsJsonString) as Map<String, dynamic>;
+        _trackedJobs = decodedMap.map(
+          (key, value) => MapEntry(
+            key, 
+            Job.fromJson(value as Map<String, dynamic>),
+          ),
+        );
+      } else {
+        _trackedJobs = {};
+      }
+    } catch (e) {
+      debugPrint('Error loading tracked jobs: $e');
       _trackedJobs = {};
+    } finally {
+      _setLoading(false);
     }
+  }
+
+  void _setLoading(bool loading) {
+    if (_disposed) return;
+    
+    _isLoading = loading;
     notifyListeners();
   }
 
   Future<void> _saveJobs() async {
-    final prefs = await SharedPreferences.getInstance();
-    final Map<String, dynamic> jsonMap =
-        _trackedJobs.map((k, v) => MapEntry(k, v.toJson()));
-    final String jsonString = json.encode(jsonMap);
-    await prefs.setString(_storageKey, jsonString);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final jsonMap = _trackedJobs.map((k, v) => MapEntry(k, v.toJson()));
+      final jsonString = json.encode(jsonMap);
+      await prefs.setString(AppConstants.storageKeyTrackedJobs, jsonString);
+    } catch (e) {
+      debugPrint('Error saving tracked jobs: $e');
+    }
   }
 
   Future<void> trackJob(Job job) async {
-    if (isJobTracked(job.id)) return;
+    if (_disposed || isJobTracked(job.id)) return;
+
     final now = DateTime.now();
-    job.createdAt = now;
-    job.lastStatusChange = now;
-    job.statusHistory[now.toIso8601String()] = job.status.name;
-    _trackedJobs[job.id] = job;
+    final jobToTrack = Job(
+      id: job.id,
+      title: job.title,
+      description: job.description,
+      applyUrl: job.applyUrl,
+      isRemote: job.isRemote,
+      company: job.company,
+      location: job.location,
+      perks: job.perks,
+      applicationFormEase: job.applicationFormEase,
+      createdAt: now,
+      lastStatusChange: now,
+      statusHistory: {now.toIso8601String(): ApplicationStatus.saved.name},
+    );
+
+    _trackedJobs[job.id] = jobToTrack;
     await _saveJobs();
-    notifyListeners();
+    
+    if (!_disposed) {
+      notifyListeners();
+    }
   }
 
   Future<void> untrackJob(String jobId) async {
-    if (!isJobTracked(jobId)) return;
+    if (_disposed || !isJobTracked(jobId)) return;
+
     _trackedJobs.remove(jobId);
     await _saveJobs();
-    notifyListeners();
+    
+    if (!_disposed) {
+      notifyListeners();
+    }
   }
 
-  Future<void> updateJobStatus(
-    String jobId,
-    ApplicationStatus newStatus,
-  ) async {
-    if (!_trackedJobs.containsKey(jobId)) return;
-    _trackedJobs[jobId]!.updateStatus(newStatus);
+  Future<void> updateJobStatus(String jobId, ApplicationStatus newStatus) async {
+    if (_disposed || !_trackedJobs.containsKey(jobId)) return;
+
+    final job = _trackedJobs[jobId]!;
+    if (job.status == newStatus) return;
+
+    job.updateStatus(newStatus);
     await _saveJobs();
-    notifyListeners();
+    
+    if (!_disposed) {
+      notifyListeners();
+    }
   }
 
   List<Job> getJobsByStatus(ApplicationStatus status) {
-    return _trackedJobs.values.where((job) => job.status == status).toList();
+    return _trackedJobs.values
+        .where((job) => job.status == status)
+        .toList();
   }
 
   Map<ApplicationStatus, int> getStatusCounts() {
-    final Map<ApplicationStatus, int> counts = {};
+    final counts = <ApplicationStatus, int>{};
     for (final status in ApplicationStatus.values) {
       counts[status] = getJobsByStatus(status).length;
     }
@@ -84,5 +135,21 @@ class ApplicationTrackerProvider with ChangeNotifier {
             job.createdAt.isAfter(start.subtract(const Duration(days: 1))) &&
             job.createdAt.isBefore(end.add(const Duration(days: 1))),)
         .toList();
+  }
+
+  int get totalTrackedJobs => _trackedJobs.length;
+
+  void clearAllJobs() {
+    if (_disposed) return;
+    
+    _trackedJobs.clear();
+    _saveJobs();
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
   }
 }

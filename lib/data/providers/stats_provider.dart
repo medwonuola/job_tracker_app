@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import '../models/job.dart';
 import 'application_tracker_provider.dart';
 
+@immutable
 class StatsData {
   final Map<ApplicationStatus, int> statusCounts;
   final Map<ApplicationStatus, double> averageDaysInStatus;
@@ -9,82 +10,105 @@ class StatsData {
   final int totalApplications;
   final double averageApplicationsPerWeek;
 
-  StatsData({
+  const StatsData({
     required this.statusCounts,
     required this.averageDaysInStatus,
     required this.applicationTrend,
     required this.totalApplications,
     required this.averageApplicationsPerWeek,
   });
+
+  static const StatsData empty = StatsData(
+    statusCounts: {},
+    averageDaysInStatus: {},
+    applicationTrend: [],
+    totalApplications: 0,
+    averageApplicationsPerWeek: 0.0,
+  );
 }
 
+@immutable
 class ApplicationTrendPoint {
   final DateTime date;
   final int cumulativeCount;
 
-  ApplicationTrendPoint({
+  const ApplicationTrendPoint({
     required this.date,
     required this.cumulativeCount,
   });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ApplicationTrendPoint &&
+          runtimeType == other.runtimeType &&
+          date == other.date &&
+          cumulativeCount == other.cumulativeCount;
+
+  @override
+  int get hashCode => date.hashCode ^ cumulativeCount.hashCode;
 }
 
 class StatsProvider with ChangeNotifier {
   final ApplicationTrackerProvider _trackerProvider;
-  StatsData? _cachedStats;
+  StatsData _cachedStats = StatsData.empty;
+  bool _disposed = false;
 
   StatsProvider(this._trackerProvider) {
     _trackerProvider.addListener(_invalidateCache);
+    _computeStats();
   }
 
   void _invalidateCache() {
-    _cachedStats = null;
+    if (_disposed) return;
+    
+    _computeStats();
     notifyListeners();
   }
 
-  StatsData get stats {
-    _cachedStats ??= _computeStats();
-    return _cachedStats!;
-  }
+  StatsData get stats => _cachedStats;
 
-  StatsData _computeStats() {
+  void _computeStats() {
     final jobs = _trackerProvider.trackedJobs.values.toList();
     
     if (jobs.isEmpty) {
-      return StatsData(
-        statusCounts: Map.fromEntries(
-          ApplicationStatus.values.map((status) => MapEntry(status, 0)),
-        ),
-        averageDaysInStatus: {},
-        applicationTrend: [],
-        totalApplications: 0,
-        averageApplicationsPerWeek: 0.0,
-      );
+      _cachedStats = _createEmptyStats();
+      return;
     }
 
-    final statusCounts = _computeStatusCounts(jobs);
-    final averageDaysInStatus = _computeAverageDaysInStatus(jobs);
-    final applicationTrend = _computeApplicationTrend(jobs);
-    final averageApplicationsPerWeek = _computeAverageApplicationsPerWeek(jobs);
-
-    return StatsData(
-      statusCounts: statusCounts,
-      averageDaysInStatus: averageDaysInStatus,
-      applicationTrend: applicationTrend,
+    _cachedStats = StatsData(
+      statusCounts: _computeStatusCounts(jobs),
+      averageDaysInStatus: _computeAverageDaysInStatus(jobs),
+      applicationTrend: _computeApplicationTrend(jobs),
       totalApplications: jobs.length,
-      averageApplicationsPerWeek: averageApplicationsPerWeek,
+      averageApplicationsPerWeek: _computeAverageApplicationsPerWeek(jobs),
+    );
+  }
+
+  StatsData _createEmptyStats() {
+    return StatsData(
+      statusCounts: Map.fromEntries(
+        ApplicationStatus.values.map((status) => MapEntry(status, 0)),
+      ),
+      averageDaysInStatus: const {},
+      applicationTrend: const [],
+      totalApplications: 0,
+      averageApplicationsPerWeek: 0.0,
     );
   }
 
   Map<ApplicationStatus, int> _computeStatusCounts(List<Job> jobs) {
-    final Map<ApplicationStatus, int> counts = {};
+    final counts = <ApplicationStatus, int>{};
+    
     for (final status in ApplicationStatus.values) {
       counts[status] = jobs.where((job) => job.status == status).length;
     }
+    
     return counts;
   }
 
   Map<ApplicationStatus, double> _computeAverageDaysInStatus(List<Job> jobs) {
-    final Map<ApplicationStatus, List<int>> statusDays = {};
+    final statusDays = <ApplicationStatus, List<int>>{};
     
     for (final status in ApplicationStatus.values) {
       statusDays[status] = [];
@@ -99,14 +123,12 @@ class StatsProvider with ChangeNotifier {
       }
     }
 
-    final Map<ApplicationStatus, double> averages = {};
+    final averages = <ApplicationStatus, double>{};
     for (final status in ApplicationStatus.values) {
       final days = statusDays[status]!;
-      if (days.isNotEmpty) {
-        averages[status] = days.reduce((a, b) => a + b) / days.length;
-      } else {
-        averages[status] = 0.0;
-      }
+      averages[status] = days.isNotEmpty 
+          ? days.reduce((a, b) => a + b) / days.length 
+          : 0.0;
     }
 
     return averages;
@@ -115,10 +137,10 @@ class StatsProvider with ChangeNotifier {
   List<ApplicationTrendPoint> _computeApplicationTrend(List<Job> jobs) {
     if (jobs.isEmpty) return [];
 
-    final sortedJobs = jobs.toList()
+    final sortedJobs = List<Job>.from(jobs)
       ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
 
-    final List<ApplicationTrendPoint> trend = [];
+    final trend = <ApplicationTrendPoint>[];
     final startDate = sortedJobs.first.createdAt;
     final endDate = DateTime.now();
     
@@ -147,7 +169,7 @@ class StatsProvider with ChangeNotifier {
   double _computeAverageApplicationsPerWeek(List<Job> jobs) {
     if (jobs.isEmpty) return 0.0;
 
-    final sortedJobs = jobs.toList()
+    final sortedJobs = List<Job>.from(jobs)
       ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
 
     final startDate = sortedJobs.first.createdAt;
@@ -162,6 +184,7 @@ class StatsProvider with ChangeNotifier {
 
   @override
   void dispose() {
+    _disposed = true;
     _trackerProvider.removeListener(_invalidateCache);
     super.dispose();
   }

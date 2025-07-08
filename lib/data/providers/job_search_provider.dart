@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import '../../api/api_service.dart';
+import '../../core/constants/app_constants.dart';
 import '../models/job.dart';
 import '../models/search_filters.dart';
 
@@ -9,7 +10,7 @@ class JobSearchProvider with ChangeNotifier {
   final ApiService _apiService = ApiService();
 
   List<Job> _jobs = [];
-  List<Job> get jobs => _jobs;
+  List<Job> get jobs => List.unmodifiable(_jobs);
 
   SearchState _state = SearchState.initial;
   SearchState get state => _state;
@@ -23,33 +24,68 @@ class JobSearchProvider with ChangeNotifier {
   String _lastQuery = '';
   String get lastQuery => _lastQuery;
 
+  bool _disposed = false;
+
   Future<void> performSearch(String query, [SearchFilters? customFilters]) async {
-    if (query.isEmpty) {
-      _state = SearchState.initial;
-      _jobs = [];
-      _lastQuery = '';
-      notifyListeners();
+    if (_disposed) return;
+
+    final trimmedQuery = query.trim();
+    if (trimmedQuery.isEmpty) {
+      _updateState(SearchState.initial, jobs: [], query: '');
       return;
     }
 
-    _state = SearchState.loading;
-    _lastQuery = query;
-    notifyListeners();
+    _updateState(SearchState.loading, query: trimmedQuery);
 
     try {
-      _jobs = await _apiService.searchJobs(
-        query: query,
+      final searchResults = await _apiService.searchJobs(
+        query: trimmedQuery,
         filters: customFilters ?? _filters,
       );
-      _state = SearchState.loaded;
+      
+      if (!_disposed) {
+        _updateState(SearchState.loaded, jobs: searchResults);
+      }
     } catch (e) {
-      _errorMessage = e.toString();
-      _state = SearchState.error;
+      if (!_disposed) {
+        _updateState(SearchState.error, errorMessage: _getErrorMessage(e));
+      }
     }
+  }
+
+  void _updateState(
+    SearchState newState, {
+    List<Job>? jobs,
+    String? errorMessage,
+    String? query,
+  }) {
+    if (_disposed) return;
+
+    _state = newState;
+    if (jobs != null) _jobs = jobs;
+    if (errorMessage != null) _errorMessage = errorMessage;
+    if (query != null) _lastQuery = query;
+    
     notifyListeners();
   }
 
+  String _getErrorMessage(dynamic error) {
+    final errorString = error.toString();
+    
+    if (errorString.contains('Network')) {
+      return AppConstants.errorMessages['networkError']!;
+    } else if (errorString.contains('Rate limit')) {
+      return AppConstants.errorMessages['rateLimitError']!;
+    } else if (errorString.contains('Authentication')) {
+      return AppConstants.errorMessages['authError']!;
+    } else {
+      return errorString;
+    }
+  }
+
   void updateFilters(SearchFilters newFilters) {
+    if (_disposed || _filters == newFilters) return;
+
     _filters = newFilters;
     notifyListeners();
     
@@ -59,13 +95,26 @@ class JobSearchProvider with ChangeNotifier {
   }
 
   void clearFilters() {
-    _filters = const SearchFilters();
-    notifyListeners();
-    
-    if (_lastQuery.isNotEmpty) {
-      performSearch(_lastQuery);
-    }
+    updateFilters(const SearchFilters());
   }
 
   bool get hasActiveFilters => !_filters.isEmpty;
+
+  void reset() {
+    if (_disposed) return;
+    
+    _updateState(
+      SearchState.initial,
+      jobs: [],
+      query: '',
+      errorMessage: '',
+    );
+    _filters = const SearchFilters();
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
 }

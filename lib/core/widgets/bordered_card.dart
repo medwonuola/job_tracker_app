@@ -26,32 +26,69 @@ class BorderedCard extends StatefulWidget {
   State<BorderedCard> createState() => _BorderedCardState();
 }
 
-class _BorderedCardState extends State<BorderedCard> {
-  bool _isHovered = false;
+class _BorderedCardState extends State<BorderedCard>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _animationController;
+  late final Animation<Color?> _borderColorAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 150),
+      vsync: this,
+    );
+
+    _borderColorAnimation = ColorTween(
+      begin: widget.borderColor ?? ContextColors.border,
+      end: ContextColors.borderDark,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ),);
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void _handleHoverChange(bool isHovered) {
+    if (!widget.showHoverEffect || widget.onTap == null) return;
+
+    if (isHovered) {
+      _animationController.forward();
+    } else {
+      _animationController.reverse();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: widget.margin,
       child: MouseRegion(
-        onEnter: (_) => setState(() => _isHovered = true),
-        onExit: (_) => setState(() => _isHovered = false),
+        onEnter: (_) => _handleHoverChange(true),
+        onExit: (_) => _handleHoverChange(false),
         child: GestureDetector(
           onTap: widget.onTap,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 150),
-            padding: widget.padding,
-            decoration: BoxDecoration(
-              color: widget.backgroundColor ?? ContextColors.background,
-              border: Border.all(
-                color: widget.borderColor ?? 
-                    (_isHovered && widget.onTap != null && widget.showHoverEffect
-                        ? ContextColors.borderDark
-                        : ContextColors.border),
-                width: 2.0,
-              ),
-            ),
-            child: widget.child,
+          child: AnimatedBuilder(
+            animation: _borderColorAnimation,
+            builder: (context, child) {
+              return Container(
+                padding: widget.padding,
+                decoration: BoxDecoration(
+                  color: widget.backgroundColor ?? ContextColors.background,
+                  border: Border.all(
+                    color: _borderColorAnimation.value ?? 
+                           (widget.borderColor ?? ContextColors.border),
+                    width: 2.0,
+                  ),
+                ),
+                child: widget.child,
+              );
+            },
           ),
         ),
       ),
