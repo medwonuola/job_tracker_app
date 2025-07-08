@@ -49,14 +49,13 @@ class _ContextButtonState extends State<ContextButton> {
                   return Colors.transparent;
                 case ContextButtonVariant.success:
                   return states.contains(WidgetState.pressed) || _isHovered
-                      ? ContextColors.success.withOpacity(0.9)
+                      ? ContextColors.success.withValues(alpha: 0.9)
                       : ContextColors.success;
                 case ContextButtonVariant.warning:
                   return states.contains(WidgetState.pressed) || _isHovered
-                      ? ContextColors.warning.withOpacity(0.9)
+                      ? ContextColors.warning.withValues(alpha: 0.9)
                       : ContextColors.warning;
                 case ContextButtonVariant.primary:
-                default:
                   return states.contains(WidgetState.pressed) || _isHovered
                       ? ContextColors.borderDark
                       : ContextColors.accent;
@@ -130,7 +129,6 @@ class _ContextButtonState extends State<ContextButton> {
         return ContextColors.warning;
       case ContextButtonVariant.outline:
       case ContextButtonVariant.primary:
-      default:
         return ContextColors.borderDark;
     }
   }

@@ -60,7 +60,6 @@ class _TrackerScreenState extends State<TrackerScreen> {
                 decoration: BoxDecoration(
                   border: Border.all(
                     color: ContextColors.border,
-                    width: 2,
                   ),
                 ),
                 child: Column(
@@ -72,7 +71,6 @@ class _TrackerScreenState extends State<TrackerScreen> {
                         color: ContextColors.neutralLight,
                         border: Border.all(
                           color: ContextColors.border,
-                          width: 2,
                         ),
                       ),
                       child: const Icon(
@@ -114,7 +112,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
                 decoration: const BoxDecoration(
                   color: ContextColors.neutralLight,
                   border: Border(
-                    bottom: BorderSide(color: ContextColors.border, width: 2),
+                    bottom: BorderSide(color: ContextColors.border),
                   ),
                 ),
                 child: Column(
@@ -125,7 +123,6 @@ class _TrackerScreenState extends State<TrackerScreen> {
                         const Icon(
                           Icons.filter_list,
                           color: ContextColors.textPrimary,
-                          size: 20,
                         ),
                         const SizedBox(width: ContextSpacing.sm),
                         Text(
@@ -178,7 +175,6 @@ class _TrackerScreenState extends State<TrackerScreen> {
                             color: ContextColors.neutralLight,
                             border: Border.all(
                               color: ContextColors.border,
-                              width: 2,
                             ),
                           ),
                           child: Column(
@@ -253,7 +249,6 @@ class _TrackerScreenState extends State<TrackerScreen> {
           color: isSelected ? color : ContextColors.background,
           border: Border.all(
             color: isSelected ? ContextColors.borderDark : ContextColors.border,
-            width: 2,
           ),
         ),
         child: Row(
@@ -288,7 +283,6 @@ class _TrackerScreenState extends State<TrackerScreen> {
                           ? ContextColors.textPrimary 
                           : Colors.white)
                       : color,
-                  width: 1,
                 ),
               ),
               child: Text(

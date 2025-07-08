@@ -10,23 +10,32 @@ class JobPerksRow extends StatelessWidget {
     required this.perks,
   });
 
-  static const Map<String, IconData> _perkIcons = {
-    'Visa sponsorship': Icons.language,
-    '401k matching': Icons.savings,
-    '4-day work week': Icons.work_history,
-    'Generous PTO': Icons.beach_access,
-    'Parental leave': Icons.family_restroom,
-    'Tuition reimbursement': Icons.school,
-    'Health insurance': Icons.health_and_safety,
-    'Remote work': Icons.home,
-    'Flexible schedule': Icons.schedule,
-    'Stock options': Icons.trending_up,
-    'Gym membership': Icons.fitness_center,
-    'Free meals': Icons.restaurant,
-  };
-
   IconData _getIconForPerk(String perk) {
-    return _perkIcons[perk] ?? Icons.star;
+    final lowercasePerk = perk.toLowerCase();
+    
+    if (lowercasePerk.contains('health') || lowercasePerk.contains('insurance')) {
+      return Icons.health_and_safety_rounded;
+    } else if (lowercasePerk.contains('pto') || lowercasePerk.contains('vacation')) {
+      return Icons.beach_access_rounded;
+    } else if (lowercasePerk.contains('401k') || lowercasePerk.contains('retirement')) {
+      return Icons.savings_rounded;
+    } else if (lowercasePerk.contains('gym') || lowercasePerk.contains('fitness')) {
+      return Icons.fitness_center_rounded;
+    } else if (lowercasePerk.contains('remote') || lowercasePerk.contains('work from home')) {
+      return Icons.home_work_rounded;
+    } else if (lowercasePerk.contains('meal') || lowercasePerk.contains('food')) {
+      return Icons.restaurant_rounded;
+    } else if (lowercasePerk.contains('visa') || lowercasePerk.contains('sponsor')) {
+      return Icons.flight_takeoff_rounded;
+    } else if (lowercasePerk.contains('stock') || lowercasePerk.contains('equity')) {
+      return Icons.trending_up_rounded;
+    } else if (lowercasePerk.contains('education') || lowercasePerk.contains('tuition')) {
+      return Icons.school_rounded;
+    } else if (lowercasePerk.contains('parental') || lowercasePerk.contains('family')) {
+      return Icons.family_restroom_rounded;
+    }
+    
+    return Icons.star_rounded;
   }
 
   @override
@@ -40,85 +49,51 @@ class JobPerksRow extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(ContextSpacing.md),
-          decoration: BoxDecoration(
-            color: ContextColors.accent,
-            border: Border.all(
-              color: ContextColors.borderDark,
-              width: 2,
-            ),
-          ),
-          child: Row(
-            children: [
-              const Icon(
-                Icons.star,
-                color: ContextColors.textPrimary,
-              ),
-              const SizedBox(width: ContextSpacing.sm),
-              Text(
-                'Benefits & Perks',
-                style: textTheme.labelLarge?.copyWith(
-                  color: ContextColors.textPrimary,
-                ),
-              ),
-            ],
+        Text(
+          'Benefits & Perks',
+          style: textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.w800,
+            color: ContextColors.textPrimary,
           ),
         ),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(ContextSpacing.lg),
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: ContextColors.border,
-              width: 2,
-            ),
-          ),
-          child: Wrap(
-            spacing: ContextSpacing.md,
-            runSpacing: ContextSpacing.md,
-            children: perks.map((perk) {
-              return Container(
-                padding: const EdgeInsets.all(ContextSpacing.md),
-                decoration: BoxDecoration(
-                  color: ContextColors.neutralLight,
-                  border: Border.all(
-                    color: ContextColors.border,
-                    width: 2,
+        const SizedBox(height: ContextSpacing.lg),
+        Wrap(
+          spacing: ContextSpacing.lg,
+          runSpacing: ContextSpacing.lg,
+          children: perks.map((perk) {
+            return Container(
+              constraints: const BoxConstraints(minWidth: 140),
+              padding: const EdgeInsets.all(ContextSpacing.lg),
+              decoration: const BoxDecoration(
+                color: ContextColors.neutralLight,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(ContextSpacing.md),
+                    decoration: const BoxDecoration(
+                      color: ContextColors.accent,
+                    ),
+                    child: Icon(
+                      _getIconForPerk(perk),
+                      size: 24,
+                      color: ContextColors.textPrimary,
+                    ),
                   ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(ContextSpacing.xs),
-                      decoration: BoxDecoration(
-                        color: ContextColors.accent,
-                        border: Border.all(
-                          color: ContextColors.borderDark,
-                          width: 2,
-                        ),
-                      ),
-                      child: Icon(
-                        _getIconForPerk(perk),
-                        size: 18,
-                        color: ContextColors.textPrimary,
-                      ),
+                  const SizedBox(height: ContextSpacing.md),
+                  Text(
+                    perk,
+                    textAlign: TextAlign.center,
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: ContextColors.textPrimary,
+                      fontWeight: FontWeight.w600,
                     ),
-                    const SizedBox(width: ContextSpacing.sm),
-                    Text(
-                      perk,
-                      style: textTheme.bodyMedium?.copyWith(
-                        color: ContextColors.textPrimary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
         ),
       ],
     );

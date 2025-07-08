@@ -20,48 +20,52 @@ class FiltersBottomSheet extends StatefulWidget {
 class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
   late SearchFilters _filters;
   final ApiService _apiService = ApiService();
-  final Debouncer _locationDebouncer = Debouncer(delay: const Duration(milliseconds: 400));
-  final Debouncer _departmentDebouncer = Debouncer(delay: const Duration(milliseconds: 250));
-  final Debouncer _industryDebouncer = Debouncer(delay: const Duration(milliseconds: 250));
-  final Throttler _salaryThrottler = Throttler(delay: const Duration(milliseconds: 300));
-  
+  final Debouncer _locationDebouncer =
+      Debouncer(delay: const Duration(milliseconds: 400));
+  final Throttler _salaryThrottler =
+      Throttler(delay: const Duration(milliseconds: 300));
+
   List<LocationSuggestion> _availableLocations = [];
-  List<String> _availableDepartments = [];
-  List<String> _availableIndustries = [];
-  bool _loadingLocations = false;
-  bool _loadingDepartments = false;
-  bool _loadingIndustries = false;
-  
+
   LocationSuggestion? _selectedLocation;
 
   final List<String> _workplaceTypes = ['Remote', 'Hybrid', 'On-site'];
-  final List<String> _commitmentTypes = ['Full-time', 'Part-time', 'Contract', 'Internship'];
-  final List<String> _seniorityLevels = ['Internship', 'Entry level', 'Associate', 'Mid-Senior level', 'Director', 'Executive'];
-  final List<String> _sortOptions = ['Date', 'Relevance', 'Salary'];
+  final List<String> _commitmentTypes = [
+    'Full-time',
+    'Part-time',
+    'Contract',
+    'Internship',
+  ];
+  final List<String> _seniorityLevels = [
+    'Internship',
+    'Entry level',
+    'Associate',
+    'Mid-Senior level',
+    'Director',
+    'Executive',
+  ];
   final List<String> _frequencyOptions = ['Yearly', 'Monthly'];
-  
+
   final Map<String, IconData> _perksOptions = {
-    'Visa sponsorship': Icons.language,
-    '401k matching': Icons.savings,
-    '4-day work week': Icons.work_history,
-    'Generous PTO': Icons.beach_access,
-    'Parental leave': Icons.family_restroom,
-    'Tuition reimbursement': Icons.school,
-    'Health insurance': Icons.health_and_safety,
-    'Remote work': Icons.home,
-    'Flexible schedule': Icons.schedule,
-    'Stock options': Icons.trending_up,
-    'Gym membership': Icons.fitness_center,
-    'Free meals': Icons.restaurant,
+    'Visa sponsorship': Icons.flight_takeoff_rounded,
+    '401k matching': Icons.savings_rounded,
+    '4-day work week': Icons.work_history_rounded,
+    'Generous PTO': Icons.beach_access_rounded,
+    'Parental leave': Icons.family_restroom_rounded,
+    'Tuition reimbursement': Icons.school_rounded,
+    'Health insurance': Icons.health_and_safety_rounded,
+    'Remote work': Icons.home_work_rounded,
+    'Flexible schedule': Icons.schedule_rounded,
+    'Stock options': Icons.trending_up_rounded,
+    'Gym membership': Icons.fitness_center_rounded,
+    'Free meals': Icons.restaurant_rounded,
   };
 
   @override
   void initState() {
     super.initState();
     _filters = Provider.of<JobSearchProvider>(context, listen: false).filters;
-    _loadDepartments();
-    _loadIndustries();
-    
+
     if (_filters.locationShort != null) {
       _selectedLocation = LocationSuggestion(
         label: _filters.locationShort!,
@@ -73,65 +77,26 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
   @override
   void dispose() {
     _locationDebouncer.dispose();
-    _departmentDebouncer.dispose();
-    _industryDebouncer.dispose();
     _salaryThrottler.dispose();
     super.dispose();
   }
 
   Future<void> _loadLocations([String? query]) async {
-    setState(() => _loadingLocations = true);
     try {
       final locations = await _apiService.searchLocations(query: query);
       if (mounted) {
         setState(() {
           _availableLocations = locations;
-          _loadingLocations = false;
         });
       }
     } catch (e) {
-      if (mounted) {
-        setState(() => _loadingLocations = false);
-      }
-    }
-  }
-
-  Future<void> _loadDepartments([String? query]) async {
-    setState(() => _loadingDepartments = true);
-    try {
-      final departments = await _apiService.getDepartments(query: query);
-      if (mounted) {
-        setState(() {
-          _availableDepartments = departments;
-          _loadingDepartments = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() => _loadingDepartments = false);
-      }
-    }
-  }
-
-  Future<void> _loadIndustries([String? query]) async {
-    setState(() => _loadingIndustries = true);
-    try {
-      final industries = await _apiService.getIndustries(query: query);
-      if (mounted) {
-        setState(() {
-          _availableIndustries = industries;
-          _loadingIndustries = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() => _loadingIndustries = false);
-      }
+      if (mounted) {}
     }
   }
 
   void _applyFilters() {
-    Provider.of<JobSearchProvider>(context, listen: false).updateFilters(_filters);
+    Provider.of<JobSearchProvider>(context, listen: false)
+        .updateFilters(_filters);
     Navigator.pop(context);
   }
 
@@ -154,9 +119,9 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
       decoration: const BoxDecoration(
         color: ContextColors.background,
         border: Border(
-          top: BorderSide(color: ContextColors.borderDark, width: 2),
-          left: BorderSide(color: ContextColors.borderDark, width: 2),
-          right: BorderSide(color: ContextColors.borderDark, width: 2),
+          top: BorderSide(color: ContextColors.border),
+          left: BorderSide(color: ContextColors.border),
+          right: BorderSide(color: ContextColors.border),
         ),
       ),
       child: Column(
@@ -165,9 +130,6 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
             padding: const EdgeInsets.all(ContextSpacing.lg),
             decoration: const BoxDecoration(
               color: ContextColors.accent,
-              border: Border(
-                bottom: BorderSide(color: ContextColors.borderDark, width: 2),
-              ),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -176,18 +138,18 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
                   'Filters',
                   style: textTheme.headlineMedium?.copyWith(
                     color: ContextColors.textPrimary,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
                 TextButton(
                   onPressed: _clearFilters,
-                  style: TextButton.styleFrom(
-                    foregroundColor: ContextColors.textPrimary,
-                    textStyle: const TextStyle(
+                  child: Text(
+                    'Clear All',
+                    style: TextStyle(
+                      color: ContextColors.textPrimary,
                       fontWeight: FontWeight.w600,
-                      decoration: TextDecoration.underline,
                     ),
                   ),
-                  child: const Text('Clear All'),
                 ),
               ],
             ),
@@ -198,100 +160,31 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  _buildSection('Location', _buildLocationSection()),
+                  _buildSection('Quick Apply', _buildQuickApplySection()),
                   _buildSection(
-                    'Location',
-                    Icons.location_on,
-                    _buildLocationSection(),
-                  ),
+                      'Workplace Type',
+                      _buildChipGroup(
+                          _workplaceTypes,
+                          _filters.workplaceTypes ?? [],
+                          (selected) => setState(() => _filters =
+                              _filters.copyWith(workplaceTypes: selected),),),),
                   _buildSection(
-                    'Application Type',
-                    Icons.flash_on,
-                    _buildQuickApplySection(),
-                  ),
+                      'Commitment',
+                      _buildChipGroup(
+                          _commitmentTypes,
+                          _filters.commitmentTypes ?? [],
+                          (selected) => setState(() => _filters =
+                              _filters.copyWith(commitmentTypes: selected),),),),
                   _buildSection(
-                    'Workplace Type',
-                    Icons.work,
-                    _buildChipGroup(
-                      _workplaceTypes,
-                      _filters.workplaceTypes ?? [],
-                      (selected) => setState(() {
-                        _filters = _filters.copyWith(workplaceTypes: selected);
-                      }),
-                    ),
-                  ),
-                  _buildSection(
-                    'Commitment',
-                    Icons.schedule,
-                    _buildChipGroup(
-                      _commitmentTypes,
-                      _filters.commitmentTypes ?? [],
-                      (selected) => setState(() {
-                        _filters = _filters.copyWith(commitmentTypes: selected);
-                      }),
-                    ),
-                  ),
-                  _buildSection(
-                    'Seniority Level',
-                    Icons.trending_up,
-                    _buildChipGroup(
-                      _seniorityLevels,
-                      _filters.seniorityLevels ?? [],
-                      (selected) => setState(() {
-                        _filters = _filters.copyWith(seniorityLevels: selected);
-                      }),
-                    ),
-                  ),
-                  _buildSection(
-                    'Benefits & Perks',
-                    Icons.star,
-                    _buildPerksSection(),
-                  ),
-                  _buildSection(
-                    'Departments',
-                    Icons.category,
-                    _buildAutocompleteSection(
-                      _availableDepartments,
-                      _filters.departments ?? [],
-                      _loadingDepartments,
-                      (query) {
-                        _departmentDebouncer(() => _loadDepartments(query));
-                      },
-                      (selected) => setState(() {
-                        _filters = _filters.copyWith(departments: selected);
-                      }),
-                    ),
-                  ),
-                  _buildSection(
-                    'Industries',
-                    Icons.business,
-                    _buildAutocompleteSection(
-                      _availableIndustries,
-                      _filters.industries ?? [],
-                      _loadingIndustries,
-                      (query) {
-                        _industryDebouncer(() => _loadIndustries(query));
-                      },
-                      (selected) => setState(() {
-                        _filters = _filters.copyWith(industries: selected);
-                      }),
-                    ),
-                  ),
-                  _buildSection(
-                    'Salary Transparency',
-                    Icons.attach_money,
-                    _buildTransparentSalarySection(),
-                  ),
-                  _buildSection(
-                    'Sort By',
-                    Icons.sort,
-                    _buildRadioGroup(
-                      _sortOptions,
-                      _filters.sortBy,
-                      (value) => setState(() {
-                        _filters = _filters.copyWith(sortBy: value);
-                      }),
-                    ),
-                  ),
+                      'Experience Level',
+                      _buildChipGroup(
+                          _seniorityLevels,
+                          _filters.seniorityLevels ?? [],
+                          (selected) => setState(() => _filters =
+                              _filters.copyWith(seniorityLevels: selected),),),),
+                  _buildSection('Benefits & Perks', _buildPerksSection()),
+                  _buildSection('Salary Range', _buildSalarySection()),
                 ],
               ),
             ),
@@ -299,9 +192,8 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
           Container(
             padding: const EdgeInsets.all(ContextSpacing.lg),
             decoration: const BoxDecoration(
-              border: Border(
-                top: BorderSide(color: ContextColors.borderDark, width: 2),
-              ),
+              color: ContextColors.background,
+              border: Border(top: BorderSide(color: ContextColors.border)),
             ),
             child: Row(
               children: [
@@ -328,41 +220,21 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
     );
   }
 
-  Widget _buildSection(String title, IconData icon, Widget content) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: ContextSpacing.lg),
-      decoration: BoxDecoration(
-        border: Border.all(color: ContextColors.border, width: 2),
-      ),
+  Widget _buildSection(String title, Widget content) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: ContextSpacing.xl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(ContextSpacing.md),
-            decoration: const BoxDecoration(
-              color: ContextColors.neutralLight,
-              border: Border(
-                bottom: BorderSide(color: ContextColors.border, width: 2),
-              ),
-            ),
-            child: Row(
-              children: [
-                Icon(icon, size: 20, color: ContextColors.textPrimary),
-                const SizedBox(width: ContextSpacing.sm),
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    color: ContextColors.textPrimary,
-                  ),
+          Text(
+            title,
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: ContextColors.textPrimary,
                 ),
-              ],
-            ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(ContextSpacing.md),
-            child: content,
-          ),
+          const SizedBox(height: ContextSpacing.md),
+          content,
         ],
       ),
     );
@@ -371,86 +243,52 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
   Widget _buildLocationSection() {
     return Column(
       children: [
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: ContextColors.border, width: 2),
+        TextField(
+          decoration: const InputDecoration(
+            hintText: 'Search for a location...',
+            prefixIcon: Icon(Icons.search_rounded),
           ),
-          child: TextField(
-            decoration: InputDecoration(
-              hintText: 'Search for a location...',
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.all(ContextSpacing.md),
-              suffixIcon: _loadingLocations
-                  ? const Padding(
-                      padding: EdgeInsets.all(ContextSpacing.md),
-                      child: SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
-                    )
-                  : const Icon(Icons.search),
-            ),
-            onChanged: (query) {
-              if (query.isEmpty) {
-                setState(() {
-                  _availableLocations = [];
-                  _selectedLocation = null;
-                  _filters = _filters.copyWith(
-                    locationShort: null,
-                    locationLat: null,
-                    locationLon: null,
-                  );
-                });
-                return;
-              }
-              _locationDebouncer(() => _loadLocations(query));
-            },
-          ),
+          onChanged: (query) {
+            if (query.isEmpty) {
+              setState(() {
+                _availableLocations = [];
+                _selectedLocation = null;
+                _filters = _filters.copyWith();
+              });
+              return;
+            }
+            _locationDebouncer(() => _loadLocations(query));
+          },
         ),
-        const SizedBox(height: ContextSpacing.sm),
-        if (_selectedLocation != null)
+        if (_selectedLocation != null) ...[
+          const SizedBox(height: ContextSpacing.md),
           Container(
             padding: const EdgeInsets.all(ContextSpacing.md),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: ContextColors.successLight,
-              border: Border.all(color: ContextColors.success, width: 2),
             ),
             child: Row(
               children: [
                 const Icon(Icons.location_on, color: ContextColors.success),
                 const SizedBox(width: ContextSpacing.sm),
-                Expanded(
-                  child: Text(
-                    _selectedLocation!.label,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: ContextColors.textPrimary,
-                    ),
-                  ),
-                ),
+                Expanded(child: Text(_selectedLocation!.label)),
                 IconButton(
-                  icon: const Icon(Icons.close, size: 18),
-                  onPressed: () {
-                    setState(() {
-                      _selectedLocation = null;
-                      _filters = _filters.copyWith(
-                        locationShort: null,
-                        locationLat: null,
-                        locationLon: null,
-                      );
-                    });
-                  },
+                  icon: const Icon(Icons.close),
+                  onPressed: () => setState(() {
+                    _selectedLocation = null;
+                    _filters = _filters.copyWith();
+                  }),
                 ),
               ],
             ),
           ),
-        if (_availableLocations.isNotEmpty && _selectedLocation == null)
+        ],
+        if (_availableLocations.isNotEmpty && _selectedLocation == null) ...[
+          const SizedBox(height: ContextSpacing.md),
           Container(
-            height: 120,
-            margin: const EdgeInsets.only(top: ContextSpacing.sm),
-            decoration: BoxDecoration(
-              border: Border.all(color: ContextColors.border, width: 2),
+            height: 200,
+            decoration: const BoxDecoration(
+              color: ContextColors.neutralLight,
             ),
             child: ListView.builder(
               itemCount: _availableLocations.length,
@@ -459,65 +297,39 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
                 return ListTile(
                   leading: const Icon(Icons.location_on),
                   title: Text(location.label),
-                  onTap: () {
-                    setState(() {
-                      _selectedLocation = location;
-                      _filters = _filters.copyWith(
-                        locationShort: location.shortCode,
-                        locationLat: location.lat,
-                        locationLon: location.lon,
-                        region: 'anywhere_in_world',
-                      );
-                      _availableLocations = [];
-                    });
-                  },
+                  onTap: () => setState(() {
+                    _selectedLocation = location;
+                    _filters = _filters.copyWith(
+                      locationShort: location.shortCode,
+                      locationLat: location.lat,
+                      locationLon: location.lon,
+                      region: 'anywhere_in_world',
+                    );
+                    _availableLocations = [];
+                  }),
                 );
               },
             ),
           ),
+        ],
       ],
     );
   }
 
   Widget _buildQuickApplySection() {
-    return Container(
-      decoration: BoxDecoration(
-        color: _filters.quickApplyOnly ? ContextColors.accent.withAlpha(51) : null,
-        border: Border.all(
-          color: _filters.quickApplyOnly ? ContextColors.accent : ContextColors.border,
-          width: 2,
-        ),
-      ),
-      child: SwitchListTile(
-        title: const Row(
-          children: [
-            Icon(
-              Icons.flash_on,
-              color: ContextColors.textPrimary,
-              size: 20,
-            ),
-            SizedBox(width: ContextSpacing.xs),
-            Text('Quick Apply Only'),
-          ],
-        ),
-        subtitle: const Text('Show only jobs with simple application forms'),
-        value: _filters.quickApplyOnly,
-        onChanged: (value) {
-          setState(() {
-            _filters = _filters.copyWith(quickApplyOnly: value);
-          });
-        },
-        contentPadding: const EdgeInsets.all(ContextSpacing.md),
-        activeColor: ContextColors.accent,
-      ),
+    return SwitchListTile(
+      title: const Text('Quick Apply Only'),
+      subtitle: const Text('Show only jobs with simple application forms'),
+      value: _filters.quickApplyOnly,
+      onChanged: (value) =>
+          setState(() => _filters = _filters.copyWith(quickApplyOnly: value)),
+      contentPadding: EdgeInsets.zero,
+      activeColor: ContextColors.accent,
     );
   }
 
-  Widget _buildChipGroup(
-    List<String> options,
-    List<String> selected,
-    void Function(List<String>) onChanged,
-  ) {
+  Widget _buildChipGroup(List<String> options, List<String> selected,
+      void Function(List<String>) onChanged,) {
     return Wrap(
       spacing: ContextSpacing.sm,
       runSpacing: ContextSpacing.sm,
@@ -536,18 +348,8 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
             onChanged(newSelected);
           },
           selectedColor: ContextColors.accent,
-          backgroundColor: ContextColors.background,
-          shape: RoundedRectangleBorder(
-            side: BorderSide(
-              color: isSelected ? ContextColors.borderDark : ContextColors.border,
-              width: 2,
-            ),
-          ),
+          backgroundColor: ContextColors.neutralLight,
           showCheckmark: false,
-          labelStyle: TextStyle(
-            color: isSelected ? ContextColors.textPrimary : ContextColors.textSecondary,
-            fontWeight: FontWeight.w600,
-          ),
         );
       }).toList(),
     );
@@ -555,7 +357,7 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
 
   Widget _buildPerksSection() {
     final selectedPerks = _filters.perks ?? <String>{};
-    
+
     return Wrap(
       spacing: ContextSpacing.sm,
       runSpacing: ContextSpacing.sm,
@@ -563,13 +365,9 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
         final perk = entry.key;
         final icon = entry.value;
         final isSelected = selectedPerks.contains(perk);
-        
+
         return FilterChip(
-          avatar: Icon(
-            icon,
-            size: 18,
-            color: isSelected ? ContextColors.textPrimary : ContextColors.textSecondary,
-          ),
+          avatar: Icon(icon, size: 18),
           label: Text(perk),
           selected: isSelected,
           onSelected: (value) {
@@ -579,115 +377,17 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
             } else {
               newPerks.remove(perk);
             }
-            setState(() {
-              _filters = _filters.copyWith(perks: newPerks);
-            });
+            setState(() => _filters = _filters.copyWith(perks: newPerks));
           },
           selectedColor: ContextColors.accent,
-          backgroundColor: ContextColors.background,
-          shape: RoundedRectangleBorder(
-            side: BorderSide(
-              color: isSelected ? ContextColors.borderDark : ContextColors.border,
-              width: 2,
-            ),
-          ),
+          backgroundColor: ContextColors.neutralLight,
           showCheckmark: false,
-          labelStyle: TextStyle(
-            color: isSelected ? ContextColors.textPrimary : ContextColors.textSecondary,
-            fontWeight: FontWeight.w600,
-          ),
         );
       }).toList(),
     );
   }
 
-  Widget _buildAutocompleteSection(
-    List<String> available,
-    List<String> selected,
-    bool loading,
-    void Function(String) onSearch,
-    void Function(List<String>) onChanged,
-  ) {
-    return Column(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: ContextColors.border, width: 2),
-          ),
-          child: TextField(
-            decoration: InputDecoration(
-              hintText: 'Search...',
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.all(ContextSpacing.md),
-              suffixIcon: loading
-                  ? const Padding(
-                      padding: EdgeInsets.all(ContextSpacing.md),
-                      child: SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
-                    )
-                  : const Icon(Icons.search),
-            ),
-            onChanged: onSearch,
-          ),
-        ),
-        const SizedBox(height: ContextSpacing.sm),
-        if (selected.isNotEmpty)
-          Wrap(
-            spacing: ContextSpacing.sm,
-            children: selected.map((item) {
-              return Chip(
-                label: Text(item),
-                deleteIcon: const Icon(Icons.close, size: 18),
-                onDeleted: () {
-                  final newSelected = List<String>.from(selected);
-                  newSelected.remove(item);
-                  onChanged(newSelected);
-                },
-                backgroundColor: ContextColors.accent,
-                side: const BorderSide(
-                  color: ContextColors.borderDark,
-                  width: 2,
-                ),
-                shape: const RoundedRectangleBorder(),
-              );
-            }).toList(),
-          ),
-        if (available.isNotEmpty)
-          Container(
-            height: 120,
-            margin: const EdgeInsets.only(top: ContextSpacing.sm),
-            decoration: BoxDecoration(
-              border: Border.all(color: ContextColors.border, width: 2),
-            ),
-            child: ListView.builder(
-              itemCount: available.length,
-              itemBuilder: (context, index) {
-                final item = available[index];
-                final isSelected = selected.contains(item);
-                return ListTile(
-                  title: Text(item),
-                  trailing: isSelected ? const Icon(Icons.check, color: ContextColors.success) : null,
-                  onTap: () {
-                    final newSelected = List<String>.from(selected);
-                    if (isSelected) {
-                      newSelected.remove(item);
-                    } else {
-                      newSelected.add(item);
-                    }
-                    onChanged(newSelected);
-                  },
-                );
-              },
-            ),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildTransparentSalarySection() {
+  Widget _buildSalarySection() {
     final currentMin = _filters.minPay ?? 0.0;
     final currentMax = _filters.maxPay ?? 400000.0;
     final frequency = _filters.frequency ?? 'Yearly';
@@ -695,138 +395,45 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          decoration: BoxDecoration(
-            color: _filters.restrictTransparent ? ContextColors.infoLight : null,
-            border: Border.all(
-              color: _filters.restrictTransparent ? ContextColors.info : ContextColors.border,
-              width: 2,
-            ),
-          ),
-          child: SwitchListTile(
-            title: const Text('Only show jobs with published salary'),
-            value: _filters.restrictTransparent,
-            onChanged: (value) {
-              setState(() {
-                _filters = _filters.copyWith(restrictTransparent: value);
-              });
-            },
-            contentPadding: const EdgeInsets.all(ContextSpacing.md),
-            activeColor: ContextColors.info,
-          ),
+        SwitchListTile(
+          title: const Text('Only show jobs with published salary'),
+          value: _filters.restrictTransparent,
+          onChanged: (value) => setState(
+              () => _filters = _filters.copyWith(restrictTransparent: value),),
+          contentPadding: EdgeInsets.zero,
+          activeColor: ContextColors.info,
         ),
-        const SizedBox(height: ContextSpacing.md),
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: ContextColors.border, width: 2),
-          ),
-          child: DropdownButtonFormField<String>(
-            decoration: const InputDecoration(
-              labelText: 'Frequency',
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.all(ContextSpacing.md),
-            ),
-            value: frequency,
-            items: _frequencyOptions.map((String option) {
-              return DropdownMenuItem<String>(
-                value: option,
-                child: Text(option),
-              );
-            }).toList(),
-            onChanged: (String? newValue) {
-              if (newValue != null) {
-                setState(() {
-                  _filters = _filters.copyWith(frequency: newValue);
-                });
-              }
-            },
-          ),
+        const SizedBox(height: ContextSpacing.lg),
+        DropdownButtonFormField<String>(
+          decoration: const InputDecoration(labelText: 'Frequency'),
+          value: frequency,
+          items: _frequencyOptions
+              .map((option) =>
+                  DropdownMenuItem(value: option, child: Text(option)),)
+              .toList(),
+          onChanged: (value) =>
+              setState(() => _filters = _filters.copyWith(frequency: value)),
         ),
-        const SizedBox(height: ContextSpacing.md),
-        Container(
-          padding: const EdgeInsets.all(ContextSpacing.md),
-          decoration: BoxDecoration(
-            border: Border.all(color: ContextColors.border, width: 2),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Salary Range: \$${currentMin.round().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')} - \$${currentMax.round().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: ContextSpacing.sm),
-              RangeSlider(
-                values: RangeValues(currentMin, currentMax),
-                max: 400000.0,
-                divisions: 80,
-                labels: RangeLabels(
-                  '\$${(currentMin / 1000).round()}k',
-                  '\$${(currentMax / 1000).round()}k',
-                ),
-                onChanged: (RangeValues values) {
-                  _salaryThrottler(() {
-                    final minVal = values.start;
-                    final maxVal = values.end;
-                    
-                    final correctedMin = minVal <= maxVal ? minVal : maxVal;
-                    final correctedMax = minVal <= maxVal ? maxVal : minVal;
-                    
-                    setState(() {
-                      _filters = _filters.copyWith(
-                        minPay: correctedMin,
-                        maxPay: correctedMax,
-                      );
-                    });
-                  });
-                },
-                activeColor: ContextColors.accent,
-                inactiveColor: ContextColors.border,
-              ),
-            ],
-          ),
+        const SizedBox(height: ContextSpacing.lg),
+        Text(
+          'Range: \$${currentMin.round().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')} - \$${currentMax.round().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}',
+          style: Theme.of(context)
+              .textTheme
+              .bodyMedium
+              ?.copyWith(fontWeight: FontWeight.w600),
+        ),
+        RangeSlider(
+          values: RangeValues(currentMin, currentMax),
+          max: 400000.0,
+          divisions: 80,
+          labels: RangeLabels('\$${(currentMin / 1000).round()}k',
+              '\$${(currentMax / 1000).round()}k',),
+          onChanged: (values) => _salaryThrottler(() => setState(() =>
+              _filters =
+                  _filters.copyWith(minPay: values.start, maxPay: values.end),),),
+          activeColor: ContextColors.accent,
         ),
       ],
-    );
-  }
-
-  Widget _buildRadioGroup(
-    List<String> options,
-    String? selected,
-    void Function(String?) onChanged,
-  ) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: ContextColors.border, width: 2),
-      ),
-      child: Column(
-        children: options.asMap().entries.map((entry) {
-          final index = entry.key;
-          final option = entry.value;
-          final isLast = index == options.length - 1;
-          
-          return Container(
-            decoration: BoxDecoration(
-              border: isLast ? null : const Border(
-                bottom: BorderSide(color: ContextColors.border, width: 1),
-              ),
-            ),
-            child: RadioListTile<String>(
-              title: Text(option),
-              value: option,
-              groupValue: selected,
-              onChanged: onChanged,
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: ContextSpacing.md,
-                vertical: ContextSpacing.xs,
-              ),
-              activeColor: ContextColors.accent,
-            ),
-          );
-        }).toList(),
-      ),
     );
   }
 }

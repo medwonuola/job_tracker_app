@@ -59,10 +59,10 @@ class ApiService {
     } on DioException catch (e) {
       if (e.response?.statusCode == 429) {
         throw const RateLimitException(
-            'Rate limit exceeded. Please try again later.');
+            'Rate limit exceeded. Please try again later.',);
       } else if (e.response?.statusCode == 401) {
         throw const AuthenticationException(
-            'API authentication failed. Please check API key.');
+            'API authentication failed. Please check API key.',);
       } else {
         throw NetworkException('Network Error: ${e.message}');
       }
@@ -100,7 +100,7 @@ class ApiService {
         }
       } else {
         throw ServerException(
-            'Unexpected response format: ${responseData.runtimeType}');
+            'Unexpected response format: ${responseData.runtimeType}',);
       }
 
       return jobsArray

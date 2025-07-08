@@ -71,69 +71,63 @@ class _JobSearchScreenState extends State<JobSearchScreen> {
                 Row(
                   children: [
                     Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: ContextColors.border,
-                            width: 2.0,
-                          ),
-                        ),
-                        child: TextField(
-                          controller: _searchController,
-                          decoration: InputDecoration(
-                            hintText: 'Search jobs (e.g. "Flutter Developer")',
-                            border: InputBorder.none,
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: ContextSpacing.md,
-                              vertical: ContextSpacing.md,
-                            ),
-                            suffixIcon: Container(
-                              margin: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                color: ContextColors.accent,
-                                border: Border.all(
-                                  color: ContextColors.borderDark,
-                                  width: 2,
-                                ),
-                              ),
-                              child: IconButton(
-                                icon: const Icon(
-                                  Icons.search,
-                                  color: ContextColors.textPrimary,
-                                ),
-                                onPressed: _performSearch,
-                              ),
+                      child: SizedBox(
+                        height: 52,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: ContextColors.border,
+                              width: 2.0,
                             ),
                           ),
-                          onSubmitted: (_) => _performSearch(),
-                          textInputAction: TextInputAction.search,
-                          style: ContextTypography.bodyMd
-                              .copyWith(color: ContextColors.textPrimary),
+                          child: TextField(
+                            controller: _searchController,
+                            decoration: const InputDecoration(
+                              hintText: 'Search jobs (e.g. "Flutter Developer")',
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: ContextSpacing.md,
+                                vertical: ContextSpacing.md,
+                              ),
+                              prefixIcon: Icon(
+                                Icons.search_rounded,
+                                color: ContextColors.textSecondary,
+                              ),
+                            ),
+                            onSubmitted: (_) => _performSearch(),
+                            textInputAction: TextInputAction.search,
+                            style: ContextTypography.bodyMd
+                                .copyWith(color: ContextColors.textPrimary),
+                          ),
                         ),
                       ),
                     ),
                     const SizedBox(width: ContextSpacing.md),
                     Consumer<JobSearchProvider>(
                       builder: (context, provider, child) {
-                        return Container(
-                          decoration: BoxDecoration(
-                            color: provider.hasActiveFilters
-                                ? ContextColors.accent
-                                : ContextColors.background,
-                            border: Border.all(
+                        return SizedBox(
+                          height: 52,
+                          width: 52,
+                          child: Container(
+                            decoration: BoxDecoration(
                               color: provider.hasActiveFilters
-                                  ? ContextColors.borderDark
-                                  : ContextColors.border,
-                              width: 2.0,
+                                  ? ContextColors.accent
+                                  : ContextColors.background,
+                              border: Border.all(
+                                color: provider.hasActiveFilters
+                                    ? ContextColors.borderDark
+                                    : ContextColors.border,
+                                width: 2.0,
+                              ),
                             ),
-                          ),
-                          child: IconButton(
-                            onPressed: _showFilters,
-                            icon: Icon(
-                              Icons.tune,
-                              color: provider.hasActiveFilters
-                                  ? ContextColors.textPrimary
-                                  : ContextColors.textSecondary,
+                            child: IconButton(
+                              onPressed: _showFilters,
+                              icon: Icon(
+                                Icons.tune_rounded,
+                                color: provider.hasActiveFilters
+                                    ? ContextColors.textPrimary
+                                    : ContextColors.textSecondary,
+                              ),
                             ),
                           ),
                         );
@@ -160,7 +154,7 @@ class _JobSearchScreenState extends State<JobSearchScreen> {
                         child: Row(
                           children: [
                             const Icon(
-                              Icons.filter_alt,
+                              Icons.filter_alt_rounded,
                               size: 16,
                               color: ContextColors.textPrimary,
                             ),
@@ -234,7 +228,7 @@ class _JobSearchScreenState extends State<JobSearchScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             const Icon(
-                              Icons.error_outline,
+                              Icons.error_outline_rounded,
                               color: ContextColors.warning,
                               size: 48,
                             ),
@@ -274,7 +268,7 @@ class _JobSearchScreenState extends State<JobSearchScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               const Icon(
-                                Icons.search_off,
+                                Icons.search_off_rounded,
                                 color: ContextColors.neutral,
                                 size: 48,
                               ),
@@ -340,7 +334,7 @@ class _JobSearchScreenState extends State<JobSearchScreen> {
                                 ),
                               ),
                               child: const Icon(
-                                Icons.search,
+                                Icons.work_outline_rounded,
                                 color: ContextColors.textPrimary,
                                 size: 48,
                               ),

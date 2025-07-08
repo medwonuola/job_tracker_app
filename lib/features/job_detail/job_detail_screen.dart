@@ -26,36 +26,19 @@ class JobDetailScreen extends StatelessWidget {
         title: Text(job.company.name),
         backgroundColor: ContextColors.background,
         surfaceTintColor: Colors.transparent,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(2),
-          child: Container(
-            height: 2,
-            color: ContextColors.border,
-          ),
-        ),
         actions: [
-          Container(
-            margin: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: isTracked ? ContextColors.accent : ContextColors.background,
-              border: Border.all(
-                color: isTracked ? ContextColors.borderDark : ContextColors.border,
-                width: 2,
-              ),
+          IconButton(
+            icon: Icon(
+              isTracked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+              color: isTracked ? ContextColors.accent : ContextColors.textSecondary,
             ),
-            child: IconButton(
-              icon: Icon(
-                isTracked ? Icons.bookmark : Icons.bookmark_border,
-                color: ContextColors.textPrimary,
-              ),
-              onPressed: () {
-                if (isTracked) {
-                  trackerProvider.untrackJob(job.id);
-                } else {
-                  trackerProvider.trackJob(job);
-                }
-              },
-            ),
+            onPressed: () {
+              if (isTracked) {
+                trackerProvider.untrackJob(job.id);
+              } else {
+                trackerProvider.trackJob(job);
+              }
+            },
           ),
         ],
       ),
@@ -65,13 +48,8 @@ class JobDetailScreen extends StatelessWidget {
           children: [
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(ContextSpacing.lg),
-              decoration: const BoxDecoration(
-                color: ContextColors.neutralLight,
-                border: Border(
-                  bottom: BorderSide(color: ContextColors.border, width: 2),
-                ),
-              ),
+              color: ContextColors.neutralLight,
+              padding: const EdgeInsets.all(ContextSpacing.xl),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -81,85 +59,65 @@ class JobDetailScreen extends StatelessWidget {
                       Container(
                         width: 80,
                         height: 80,
-                        decoration: BoxDecoration(
-                          color: ContextColors.background,
-                          border: Border.all(
-                            color: ContextColors.border,
-                            width: 2,
-                          ),
-                        ),
+                        color: ContextColors.background,
                         child: CachedNetworkImage(
                           imageUrl: job.company.image ?? '',
-                          imageBuilder: (context, imageProvider) => Container(
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: imageProvider,
-                                fit: BoxFit.contain,
-                              ),
-                            ),
+                          imageBuilder: (context, imageProvider) => Image(
+                            image: imageProvider,
+                            fit: BoxFit.contain,
                           ),
                           placeholder: (context, url) => const Icon(
-                            Icons.business,
+                            Icons.domain_rounded,
                             color: ContextColors.neutral,
                             size: 32,
                           ),
                           errorWidget: (context, url, error) => const Icon(
-                            Icons.business,
+                            Icons.domain_rounded,
                             color: ContextColors.neutral,
                             size: 32,
                           ),
                         ),
                       ),
-                      const SizedBox(width: ContextSpacing.lg),
+                      const SizedBox(width: ContextSpacing.xl),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             if (job.isQuickApply)
-                              Container(
-                                margin: const EdgeInsets.only(bottom: ContextSpacing.sm),
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: ContextSpacing.md),
                                 child: const QuickApplyBadge(showText: true),
                               ),
                             Text(
                               job.title,
-                              style: textTheme.displaySmall?.copyWith(
-                                height: 1.2,
+                              style: textTheme.headlineMedium?.copyWith(
+                                fontWeight: FontWeight.w800,
+                                color: ContextColors.textPrimary,
                               ),
                             ),
                             const SizedBox(height: ContextSpacing.sm),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: ContextSpacing.sm,
-                                vertical: ContextSpacing.xs,
-                              ),
-                              decoration: BoxDecoration(
-                                color: ContextColors.accent,
-                                border: Border.all(
-                                  color: ContextColors.borderDark,
-                                  width: 2,
-                                ),
-                              ),
-                              child: Text(
-                                job.company.name,
-                                style: textTheme.titleLarge?.copyWith(
-                                  color: ContextColors.textPrimary,
-                                  fontWeight: FontWeight.w800,
-                                ),
+                            Text(
+                              job.company.name,
+                              style: textTheme.titleLarge?.copyWith(
+                                color: ContextColors.textSecondary,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                             const SizedBox(height: ContextSpacing.sm),
                             Row(
                               children: [
-                                const Icon(
+                                Icon(
                                   Icons.location_on_outlined,
                                   size: 18,
                                   color: ContextColors.textSecondary,
                                 ),
-                                const SizedBox(width: 4),
+                                const SizedBox(width: ContextSpacing.xs),
                                 Expanded(
                                   child: Text(
                                     job.location.formattedAddress,
-                                    style: textTheme.bodyMedium,
+                                    style: textTheme.bodyLarge?.copyWith(
+                                      color: ContextColors.textSecondary,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -169,76 +127,59 @@ class JobDetailScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: ContextSpacing.lg),
+                  const SizedBox(height: ContextSpacing.xl),
                   Wrap(
-                    spacing: ContextSpacing.sm,
+                    spacing: ContextSpacing.md,
                     runSpacing: ContextSpacing.sm,
                     children: [
                       if (job.isRemote)
-                        _buildInfoChip('Remote', Icons.home, ContextColors.success),
+                        _buildInfoChip('Remote Work', ContextColors.success),
                       if (job.company.industry != null)
-                        _buildInfoChip(job.company.industry!, Icons.business, ContextColors.info),
-                      if (job.company.website != null)
-                        _buildInfoChip('Website', Icons.language, ContextColors.neutral),
+                        _buildInfoChip(job.company.industry!, ContextColors.info),
                     ],
                   ),
                 ],
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(ContextSpacing.lg),
+              padding: const EdgeInsets.all(ContextSpacing.xl),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  JobPerksRow(perks: job.perks),
-                  if (job.perks.isNotEmpty) const SizedBox(height: ContextSpacing.xl),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(ContextSpacing.md),
-                    decoration: BoxDecoration(
-                      color: ContextColors.neutralLight,
-                      border: Border.all(
-                        color: ContextColors.border,
-                        width: 2,
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.description_outlined,
-                          color: ContextColors.textPrimary,
-                        ),
-                        const SizedBox(width: ContextSpacing.sm),
-                        Text(
-                          'Job Description',
-                          style: textTheme.labelLarge?.copyWith(
-                            color: ContextColors.textPrimary,
-                          ),
-                        ),
-                      ],
+                  if (job.perks.isNotEmpty) ...[
+                    JobPerksRow(perks: job.perks),
+                    const SizedBox(height: ContextSpacing.xxl),
+                  ],
+                  Text(
+                    'Job Description',
+                    style: textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      color: ContextColors.textPrimary,
                     ),
                   ),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(ContextSpacing.lg),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: ContextColors.border,
-                        width: 2,
-                      ),
-                    ),
-                    child: Html(
-                      data: job.description,
-                      style: {
-                        'body': Style.fromTextStyle(textTheme.bodyLarge!),
-                        'h1, h2, h3, h4, h5, h6':
-                            Style.fromTextStyle(textTheme.headlineMedium!),
-                        'p': Style.fromTextStyle(textTheme.bodyLarge!),
-                        'li': Style.fromTextStyle(
-                          textTheme.bodyLarge!.copyWith(height: 1.8),
+                  const SizedBox(height: ContextSpacing.lg),
+                  Html(
+                    data: job.description,
+                    style: {
+                      'body': Style.fromTextStyle(
+                        textTheme.bodyLarge!.copyWith(
+                          height: 1.6,
+                          color: ContextColors.textPrimary,
                         ),
-                      },
-                    ),
+                      ),
+                      'h1, h2, h3, h4, h5, h6': Style.fromTextStyle(
+                        textTheme.titleLarge!.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: ContextColors.textPrimary,
+                        ),
+                      ),
+                      'p': Style.fromTextStyle(
+                        textTheme.bodyLarge!.copyWith(
+                          height: 1.6,
+                          color: ContextColors.textPrimary,
+                        ),
+                      ),
+                    },
                   ),
                 ],
               ),
@@ -248,92 +189,75 @@ class JobDetailScreen extends StatelessWidget {
       ),
       bottomNavigationBar: job.applyUrl != null && job.applyUrl!.isNotEmpty
           ? Container(
+              padding: const EdgeInsets.all(ContextSpacing.xl),
               decoration: const BoxDecoration(
+                color: ContextColors.background,
                 border: Border(
-                  top: BorderSide(color: ContextColors.border, width: 2),
+                  top: BorderSide(color: ContextColors.border),
                 ),
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(ContextSpacing.lg),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (job.isQuickApply)
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(ContextSpacing.md),
-                        margin: const EdgeInsets.only(bottom: ContextSpacing.md),
-                        decoration: BoxDecoration(
-                          color: ContextColors.accent.withAlpha(51),
-                          border: Border.all(
-                            color: ContextColors.accent,
-                            width: 2,
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.flash_on,
-                              color: ContextColors.textPrimary,
-                              size: 20,
-                            ),
-                            const SizedBox(width: ContextSpacing.sm),
-                            Text(
-                              'This company uses a short application form',
-                              style: textTheme.bodyMedium?.copyWith(
-                                color: ContextColors.textPrimary,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (job.isQuickApply)
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(ContextSpacing.md),
+                      margin: const EdgeInsets.only(bottom: ContextSpacing.lg),
+                      decoration: BoxDecoration(
+                        color: ContextColors.accent.withAlpha(51),
                       ),
-                    ContextButton(
-                      label: 'Apply Now',
-                      icon: Icons.open_in_new,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.flash_on_rounded,
+                            color: ContextColors.textPrimary,
+                            size: 20,
+                          ),
+                          const SizedBox(width: ContextSpacing.sm),
+                          Text(
+                            'Quick & Easy Application',
+                            style: textTheme.bodyMedium?.copyWith(
+                              color: ContextColors.textPrimary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ContextButton(
+                      label: 'Apply for this Job',
+                      icon: Icons.open_in_new_rounded,
                       variant: ContextButtonVariant.success,
                       onPressed: () => AppUrlLauncher.launch(job.applyUrl!),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             )
           : null,
     );
   }
 
-  Widget _buildInfoChip(String text, IconData icon, Color color) {
+  Widget _buildInfoChip(String text, Color color) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: ContextSpacing.sm,
-        vertical: ContextSpacing.xs,
+        horizontal: ContextSpacing.md,
+        vertical: ContextSpacing.sm,
       ),
       decoration: BoxDecoration(
         color: color.withAlpha(25),
-        border: Border.all(
-          color: color.withAlpha(76),
-          width: 2,
-        ),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            size: 16,
-            color: color,
-          ),
-          const SizedBox(width: ContextSpacing.xs),
-          Text(
-            text,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: color,
-            ),
-          ),
-        ],
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: color,
+        ),
       ),
     );
   }

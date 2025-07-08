@@ -37,7 +37,6 @@ class StatsScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   border: Border.all(
                     color: ContextColors.border,
-                    width: 2,
                   ),
                 ),
                 child: Column(
@@ -49,7 +48,6 @@ class StatsScreen extends StatelessWidget {
                         color: ContextColors.neutralLight,
                         border: Border.all(
                           color: ContextColors.border,
-                          width: 2,
                         ),
                       ),
                       child: const Icon(
@@ -85,6 +83,7 @@ class StatsScreen extends StatelessWidget {
                 _buildSummarySection(context, stats),
                 const SizedBox(height: ContextSpacing.xl),
                 _buildChartSection(
+                  context: context,
                   title: 'Status Distribution',
                   icon: Icons.pie_chart,
                   child: ApplicationStatusChart(
@@ -93,6 +92,7 @@ class StatsScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: ContextSpacing.xl),
                 _buildChartSection(
+                  context: context,
                   title: 'Time in Each Status',
                   icon: Icons.access_time,
                   child: TimeSpentChart(
@@ -101,6 +101,7 @@ class StatsScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: ContextSpacing.xl),
                 _buildChartSection(
+                  context: context,
                   title: 'Application Trend',
                   icon: Icons.trending_up,
                   child: ApplicationTrendChart(
@@ -126,7 +127,6 @@ class StatsScreen extends StatelessWidget {
             color: ContextColors.accent,
             border: Border.all(
               color: ContextColors.borderDark,
-              width: 2,
             ),
           ),
           child: Row(
@@ -139,8 +139,8 @@ class StatsScreen extends StatelessWidget {
               Text(
                 'Overview',
                 style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: ContextColors.textPrimary,
-                ),
+                      color: ContextColors.textPrimary,
+                    ),
               ),
             ],
           ),
@@ -187,7 +187,6 @@ class StatsScreen extends StatelessWidget {
         color: color.withAlpha(25),
         border: Border.all(
           color: color.withAlpha(76),
-          width: 2,
         ),
       ),
       child: Column(
@@ -201,13 +200,11 @@ class StatsScreen extends StatelessWidget {
                   color: color,
                   border: Border.all(
                     color: color,
-                    width: 2,
                   ),
                 ),
                 child: Icon(
                   icon,
                   color: Colors.white,
-                  size: 20,
                 ),
               ),
               const SizedBox(width: ContextSpacing.sm),
@@ -236,6 +233,7 @@ class StatsScreen extends StatelessWidget {
   }
 
   Widget _buildChartSection({
+    required BuildContext context,
     required String title,
     required IconData icon,
     required Widget child,
@@ -249,7 +247,6 @@ class StatsScreen extends StatelessWidget {
             color: ContextColors.neutralLight,
             border: Border.all(
               color: ContextColors.border,
-              width: 2,
             ),
           ),
           child: Row(
@@ -262,8 +259,8 @@ class StatsScreen extends StatelessWidget {
               Text(
                 title,
                 style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: ContextColors.textPrimary,
-                ),
+                      color: ContextColors.textPrimary,
+                    ),
               ),
             ],
           ),
@@ -274,7 +271,6 @@ class StatsScreen extends StatelessWidget {
           decoration: BoxDecoration(
             border: Border.all(
               color: ContextColors.border,
-              width: 2,
             ),
           ),
           child: child,

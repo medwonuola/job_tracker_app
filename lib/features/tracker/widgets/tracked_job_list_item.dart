@@ -51,13 +51,11 @@ class TrackedJobListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final provider =
-        Provider.of<ApplicationTrackerProvider>(context, listen: false);
+    final provider = Provider.of<ApplicationTrackerProvider>(context, listen: false);
     final statusColor = _getStatusColor(job.status);
 
     return BorderedCard(
       onTap: onTap,
-      borderColor: statusColor.withAlpha(76),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -67,30 +65,20 @@ class TrackedJobListItem extends StatelessWidget {
               Container(
                 width: 48,
                 height: 48,
-                decoration: BoxDecoration(
-                  color: ContextColors.neutralLight,
-                  border: Border.all(
-                    color: ContextColors.border,
-                    width: 2,
-                  ),
-                ),
+                color: ContextColors.neutralLight,
                 child: CachedNetworkImage(
                   imageUrl: job.company.image ?? '',
-                  imageBuilder: (context, imageProvider) => Container(
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: imageProvider,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
+                  imageBuilder: (context, imageProvider) => Image(
+                    image: imageProvider,
+                    fit: BoxFit.contain,
                   ),
                   placeholder: (context, url) => const Icon(
-                    Icons.business,
+                    Icons.domain_rounded,
                     color: ContextColors.neutral,
                     size: 20,
                   ),
                   errorWidget: (context, url, error) => const Icon(
-                    Icons.business,
+                    Icons.domain_rounded,
                     color: ContextColors.neutral,
                     size: 20,
                   ),
@@ -103,9 +91,9 @@ class TrackedJobListItem extends StatelessWidget {
                   children: [
                     Text(
                       job.title,
-                      style: textTheme.labelLarge?.copyWith(
+                      style: textTheme.titleMedium?.copyWith(
                         color: ContextColors.textPrimary,
-                        height: 1.3,
+                        fontWeight: FontWeight.w700,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -114,114 +102,53 @@ class TrackedJobListItem extends StatelessWidget {
                     Text(
                       job.company.name,
                       style: textTheme.bodyMedium?.copyWith(
+                        color: ContextColors.textSecondary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     const SizedBox(height: ContextSpacing.xs),
                     Text(
                       'Added ${_getTimeAgo(job.createdAt)}',
-                      style: textTheme.bodySmall,
+                      style: textTheme.bodySmall?.copyWith(
+                        color: ContextColors.textSecondary,
+                      ),
                     ),
                   ],
                 ),
               ),
               PopupMenuButton<ApplicationStatus>(
-                onSelected: (ApplicationStatus newStatus) {
-                  provider.updateJobStatus(job.id, newStatus);
-                },
-                itemBuilder: (BuildContext context) {
-                  return ApplicationStatus.values.map((ApplicationStatus s) {
-                    final isCurrentStatus = s == job.status;
-                    final statusColor = _getStatusColor(s);
-                    
-                    return PopupMenuItem<ApplicationStatus>(
-                      value: s,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: ContextSpacing.xs,
-                        ),
-                        decoration: isCurrentStatus ? BoxDecoration(
-                          color: statusColor.withAlpha(25),
-                          border: Border.all(
-                            color: statusColor.withAlpha(76),
-                            width: 1,
-                          ),
-                        ) : null,
-                        child: Row(
-                          children: [
-                            Icon(
-                              s.icon,
-                              color: isCurrentStatus ? statusColor : ContextColors.textSecondary,
-                              size: 18,
-                            ),
-                            const SizedBox(width: ContextSpacing.sm),
-                            Text(
-                              s.displayName,
-                              style: TextStyle(
-                                color: isCurrentStatus ? statusColor : ContextColors.textPrimary,
-                                fontWeight: isCurrentStatus ? FontWeight.w600 : FontWeight.normal,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }).toList();
-                },
-                icon: Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: ContextColors.background,
-                    border: Border.all(
-                      color: ContextColors.border,
-                      width: 2,
+                onSelected: (newStatus) => provider.updateJobStatus(job.id, newStatus),
+                itemBuilder: (context) => ApplicationStatus.values.map((s) {
+                  final isCurrentStatus = s == job.status;
+                  return PopupMenuItem<ApplicationStatus>(
+                    value: s,
+                    child: Row(
+                      children: [
+                        Icon(s.icon, color: isCurrentStatus ? _getStatusColor(s) : ContextColors.textSecondary),
+                        const SizedBox(width: ContextSpacing.sm),
+                        Text(s.displayName, style: TextStyle(fontWeight: isCurrentStatus ? FontWeight.w600 : FontWeight.normal)),
+                      ],
                     ),
-                  ),
-                  child: const Icon(
-                    Icons.more_vert,
-                    color: ContextColors.textSecondary,
-                    size: 16,
-                  ),
-                ),
+                  );
+                }).toList(),
+                icon: const Icon(Icons.more_vert_rounded, color: ContextColors.textSecondary),
               ),
             ],
           ),
           const SizedBox(height: ContextSpacing.md),
           Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: ContextSpacing.md,
-              vertical: ContextSpacing.sm,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: ContextSpacing.md, vertical: ContextSpacing.sm),
             decoration: BoxDecoration(
               color: statusColor.withAlpha(25),
-              border: Border.all(
-                color: statusColor.withAlpha(76),
-                width: 2,
-              ),
             ),
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  job.status.icon,
-                  size: 16,
-                  color: statusColor,
-                ),
+                Icon(job.status.icon, size: 16, color: statusColor),
                 const SizedBox(width: ContextSpacing.xs),
                 Text(
                   job.status.displayName,
-                  style: TextStyle(
-                    color: statusColor,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  'Updated ${_getTimeAgo(job.lastStatusChange)}',
-                  style: TextStyle(
-                    color: statusColor,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: statusColor, fontWeight: FontWeight.w600, fontSize: 14),
                 ),
               ],
             ),
