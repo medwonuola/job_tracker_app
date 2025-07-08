@@ -14,32 +14,95 @@ class StatsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Analytics'),
+        title: const Text('Analytics Dashboard'),
+        backgroundColor: ContextColors.background,
+        surfaceTintColor: Colors.transparent,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(2),
+          child: Container(
+            height: 2,
+            color: ContextColors.border,
+          ),
+        ),
       ),
       body: Consumer<StatsProvider>(
         builder: (context, provider, child) {
           final stats = provider.stats;
+
+          if (stats.totalApplications == 0) {
+            return Center(
+              child: Container(
+                margin: const EdgeInsets.all(ContextSpacing.lg),
+                padding: const EdgeInsets.all(ContextSpacing.xl),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: ContextColors.border,
+                    width: 2,
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(ContextSpacing.lg),
+                      decoration: BoxDecoration(
+                        color: ContextColors.neutralLight,
+                        border: Border.all(
+                          color: ContextColors.border,
+                          width: 2,
+                        ),
+                      ),
+                      child: const Icon(
+                        Icons.bar_chart,
+                        color: ContextColors.neutral,
+                        size: 48,
+                      ),
+                    ),
+                    const SizedBox(height: ContextSpacing.lg),
+                    Text(
+                      'No Analytics Data',
+                      style: Theme.of(context).textTheme.headlineMedium,
+                    ),
+                    const SizedBox(height: ContextSpacing.sm),
+                    const Text(
+                      'Track job applications to see your analytics here',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: ContextColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(ContextSpacing.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildSummaryCards(context, stats),
+                _buildSummarySection(context, stats),
                 const SizedBox(height: ContextSpacing.xl),
                 _buildChartSection(
+                  title: 'Status Distribution',
+                  icon: Icons.pie_chart,
                   child: ApplicationStatusChart(
                     statusCounts: stats.statusCounts,
                   ),
                 ),
                 const SizedBox(height: ContextSpacing.xl),
                 _buildChartSection(
+                  title: 'Time in Each Status',
+                  icon: Icons.access_time,
                   child: TimeSpentChart(
                     averageDaysInStatus: stats.averageDaysInStatus,
                   ),
                 ),
                 const SizedBox(height: ContextSpacing.xl),
                 _buildChartSection(
+                  title: 'Application Trend',
+                  icon: Icons.trending_up,
                   child: ApplicationTrendChart(
                     trendData: stats.applicationTrend,
                   ),
@@ -52,25 +115,58 @@ class StatsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSummaryCards(BuildContext context, StatsData stats) {
-    return Row(
+  Widget _buildSummarySection(BuildContext context, StatsData stats) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: _buildSummaryCard(
-            context,
-            'Total Applications',
-            stats.totalApplications.toString(),
-            Icons.work_outline,
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(ContextSpacing.md),
+          decoration: BoxDecoration(
+            color: ContextColors.accent,
+            border: Border.all(
+              color: ContextColors.borderDark,
+              width: 2,
+            ),
+          ),
+          child: Row(
+            children: [
+              const Icon(
+                Icons.dashboard,
+                color: ContextColors.textPrimary,
+              ),
+              const SizedBox(width: ContextSpacing.sm),
+              Text(
+                'Overview',
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: ContextColors.textPrimary,
+                ),
+              ),
+            ],
           ),
         ),
-        const SizedBox(width: ContextSpacing.md),
-        Expanded(
-          child: _buildSummaryCard(
-            context,
-            'Per Week',
-            stats.averageApplicationsPerWeek.toStringAsFixed(1),
-            Icons.timeline,
-          ),
+        Row(
+          children: [
+            Expanded(
+              child: _buildSummaryCard(
+                context,
+                'Total Applications',
+                stats.totalApplications.toString(),
+                Icons.work_outline,
+                ContextColors.info,
+              ),
+            ),
+            const SizedBox(width: ContextSpacing.md),
+            Expanded(
+              child: _buildSummaryCard(
+                context,
+                'Weekly Average',
+                stats.averageApplicationsPerWeek.toStringAsFixed(1),
+                Icons.timeline,
+                ContextColors.success,
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -81,15 +177,17 @@ class StatsScreen extends StatelessWidget {
     String title,
     String value,
     IconData icon,
+    Color color,
   ) {
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
-      padding: const EdgeInsets.all(ContextSpacing.md),
+      padding: const EdgeInsets.all(ContextSpacing.lg),
       decoration: BoxDecoration(
+        color: color.withAlpha(25),
         border: Border.all(
-          color: ContextColors.border,
-          width: 2.0,
+          color: color.withAlpha(76),
+          width: 2,
         ),
       ),
       child: Column(
@@ -97,25 +195,38 @@ class StatsScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
-                icon,
-                color: ContextColors.textSecondary,
-                size: 20,
+              Container(
+                padding: const EdgeInsets.all(ContextSpacing.xs),
+                decoration: BoxDecoration(
+                  color: color,
+                  border: Border.all(
+                    color: color,
+                    width: 2,
+                  ),
+                ),
+                child: Icon(
+                  icon,
+                  color: Colors.white,
+                  size: 20,
+                ),
               ),
-              const SizedBox(width: ContextSpacing.xs),
-              Text(
-                title,
-                style: textTheme.bodySmall?.copyWith(
-                  color: ContextColors.textSecondary,
+              const SizedBox(width: ContextSpacing.sm),
+              Expanded(
+                child: Text(
+                  title,
+                  style: textTheme.bodySmall?.copyWith(
+                    color: color,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: ContextSpacing.xs),
+          const SizedBox(height: ContextSpacing.md),
           Text(
             value,
             style: textTheme.headlineMedium?.copyWith(
-              color: ContextColors.textPrimary,
+              color: color,
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -124,16 +235,51 @@ class StatsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildChartSection({required Widget child}) {
-    return Container(
-      padding: const EdgeInsets.all(ContextSpacing.lg),
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: ContextColors.border,
-          width: 2.0,
+  Widget _buildChartSection({
+    required String title,
+    required IconData icon,
+    required Widget child,
+  }) {
+    return Column(
+      children: [
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(ContextSpacing.md),
+          decoration: BoxDecoration(
+            color: ContextColors.neutralLight,
+            border: Border.all(
+              color: ContextColors.border,
+              width: 2,
+            ),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                color: ContextColors.textPrimary,
+              ),
+              const SizedBox(width: ContextSpacing.sm),
+              Text(
+                title,
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: ContextColors.textPrimary,
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-      child: child,
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(ContextSpacing.lg),
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: ContextColors.border,
+              width: 2,
+            ),
+          ),
+          child: child,
+        ),
+      ],
     );
   }
 }

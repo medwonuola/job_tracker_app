@@ -153,11 +153,10 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
       height: screenHeight * 0.9,
       decoration: const BoxDecoration(
         color: ContextColors.background,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         border: Border(
-          top: BorderSide(color: ContextColors.border, width: 2),
-          left: BorderSide(color: ContextColors.border, width: 2),
-          right: BorderSide(color: ContextColors.border, width: 2),
+          top: BorderSide(color: ContextColors.borderDark, width: 2),
+          left: BorderSide(color: ContextColors.borderDark, width: 2),
+          right: BorderSide(color: ContextColors.borderDark, width: 2),
         ),
       ),
       child: Column(
@@ -165,16 +164,29 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
           Container(
             padding: const EdgeInsets.all(ContextSpacing.lg),
             decoration: const BoxDecoration(
+              color: ContextColors.accent,
               border: Border(
-                bottom: BorderSide(color: ContextColors.border, width: 2),
+                bottom: BorderSide(color: ContextColors.borderDark, width: 2),
               ),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Filters', style: textTheme.headlineMedium),
+                Text(
+                  'Filters',
+                  style: textTheme.headlineMedium?.copyWith(
+                    color: ContextColors.textPrimary,
+                  ),
+                ),
                 TextButton(
                   onPressed: _clearFilters,
+                  style: TextButton.styleFrom(
+                    foregroundColor: ContextColors.textPrimary,
+                    textStyle: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
                   child: const Text('Clear All'),
                 ),
               ],
@@ -188,14 +200,17 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
                 children: [
                   _buildSection(
                     'Location',
+                    Icons.location_on,
                     _buildLocationSection(),
                   ),
                   _buildSection(
                     'Application Type',
+                    Icons.flash_on,
                     _buildQuickApplySection(),
                   ),
                   _buildSection(
                     'Workplace Type',
+                    Icons.work,
                     _buildChipGroup(
                       _workplaceTypes,
                       _filters.workplaceTypes ?? [],
@@ -206,6 +221,7 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
                   ),
                   _buildSection(
                     'Commitment',
+                    Icons.schedule,
                     _buildChipGroup(
                       _commitmentTypes,
                       _filters.commitmentTypes ?? [],
@@ -216,6 +232,7 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
                   ),
                   _buildSection(
                     'Seniority Level',
+                    Icons.trending_up,
                     _buildChipGroup(
                       _seniorityLevels,
                       _filters.seniorityLevels ?? [],
@@ -226,10 +243,12 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
                   ),
                   _buildSection(
                     'Benefits & Perks',
+                    Icons.star,
                     _buildPerksSection(),
                   ),
                   _buildSection(
                     'Departments',
+                    Icons.category,
                     _buildAutocompleteSection(
                       _availableDepartments,
                       _filters.departments ?? [],
@@ -244,6 +263,7 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
                   ),
                   _buildSection(
                     'Industries',
+                    Icons.business,
                     _buildAutocompleteSection(
                       _availableIndustries,
                       _filters.industries ?? [],
@@ -258,10 +278,12 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
                   ),
                   _buildSection(
                     'Salary Transparency',
+                    Icons.attach_money,
                     _buildTransparentSalarySection(),
                   ),
                   _buildSection(
                     'Sort By',
+                    Icons.sort,
                     _buildRadioGroup(
                       _sortOptions,
                       _filters.sortBy,
@@ -278,7 +300,7 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
             padding: const EdgeInsets.all(ContextSpacing.lg),
             decoration: const BoxDecoration(
               border: Border(
-                top: BorderSide(color: ContextColors.border, width: 2),
+                top: BorderSide(color: ContextColors.borderDark, width: 2),
               ),
             ),
             child: Row(
@@ -306,67 +328,104 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
     );
   }
 
-  Widget _buildSection(String title, Widget content) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: Theme.of(context).textTheme.labelLarge,
-        ),
-        const SizedBox(height: ContextSpacing.sm),
-        content,
-        const SizedBox(height: ContextSpacing.lg),
-      ],
+  Widget _buildSection(String title, IconData icon, Widget content) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: ContextSpacing.lg),
+      decoration: BoxDecoration(
+        border: Border.all(color: ContextColors.border, width: 2),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(ContextSpacing.md),
+            decoration: const BoxDecoration(
+              color: ContextColors.neutralLight,
+              border: Border(
+                bottom: BorderSide(color: ContextColors.border, width: 2),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(icon, size: 20, color: ContextColors.textPrimary),
+                const SizedBox(width: ContextSpacing.sm),
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    color: ContextColors.textPrimary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(ContextSpacing.md),
+            child: content,
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildLocationSection() {
     return Column(
       children: [
-        TextField(
-          decoration: InputDecoration(
-            hintText: 'Search for a location...',
-            suffixIcon: _loadingLocations
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.search),
+        Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: ContextColors.border, width: 2),
           ),
-          onChanged: (query) {
-            if (query.isEmpty) {
-              setState(() {
-                _availableLocations = [];
-                _selectedLocation = null;
-                _filters = _filters.copyWith(
-                  
-                );
-              });
-              return;
-            }
-            _locationDebouncer(() => _loadLocations(query));
-          },
+          child: TextField(
+            decoration: InputDecoration(
+              hintText: 'Search for a location...',
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.all(ContextSpacing.md),
+              suffixIcon: _loadingLocations
+                  ? const Padding(
+                      padding: EdgeInsets.all(ContextSpacing.md),
+                      child: SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    )
+                  : const Icon(Icons.search),
+            ),
+            onChanged: (query) {
+              if (query.isEmpty) {
+                setState(() {
+                  _availableLocations = [];
+                  _selectedLocation = null;
+                  _filters = _filters.copyWith(
+                    locationShort: null,
+                    locationLat: null,
+                    locationLon: null,
+                  );
+                });
+                return;
+              }
+              _locationDebouncer(() => _loadLocations(query));
+            },
+          ),
         ),
         const SizedBox(height: ContextSpacing.sm),
         if (_selectedLocation != null)
           Container(
-            padding: const EdgeInsets.all(ContextSpacing.sm),
+            padding: const EdgeInsets.all(ContextSpacing.md),
             decoration: BoxDecoration(
-              color: ContextColors.accent.withAlpha(38),
-              border: Border.all(color: ContextColors.accent),
-              borderRadius: BorderRadius.circular(8),
+              color: ContextColors.successLight,
+              border: Border.all(color: ContextColors.success, width: 2),
             ),
             child: Row(
               children: [
-                const Icon(Icons.location_on, color: ContextColors.textPrimary),
-                const SizedBox(width: ContextSpacing.xs),
+                const Icon(Icons.location_on, color: ContextColors.success),
+                const SizedBox(width: ContextSpacing.sm),
                 Expanded(
                   child: Text(
                     _selectedLocation!.label,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w600,
+                      color: ContextColors.textPrimary,
                     ),
                   ),
                 ),
@@ -376,7 +435,9 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
                     setState(() {
                       _selectedLocation = null;
                       _filters = _filters.copyWith(
-                        
+                        locationShort: null,
+                        locationLat: null,
+                        locationLon: null,
                       );
                     });
                   },
@@ -419,27 +480,36 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
   }
 
   Widget _buildQuickApplySection() {
-    return SwitchListTile(
-      title: const Row(
-        children: [
-          Icon(
-            Icons.flash_on,
-            color: ContextColors.textPrimary,
-            size: 20,
-          ),
-          SizedBox(width: ContextSpacing.xs),
-          Text('Quick Apply Only'),
-        ],
+    return Container(
+      decoration: BoxDecoration(
+        color: _filters.quickApplyOnly ? ContextColors.accent.withAlpha(51) : null,
+        border: Border.all(
+          color: _filters.quickApplyOnly ? ContextColors.accent : ContextColors.border,
+          width: 2,
+        ),
       ),
-      subtitle: const Text('Show only jobs with simple application forms'),
-      value: _filters.quickApplyOnly,
-      onChanged: (value) {
-        setState(() {
-          _filters = _filters.copyWith(quickApplyOnly: value);
-        });
-      },
-      contentPadding: EdgeInsets.zero,
-      activeColor: ContextColors.accent,
+      child: SwitchListTile(
+        title: const Row(
+          children: [
+            Icon(
+              Icons.flash_on,
+              color: ContextColors.textPrimary,
+              size: 20,
+            ),
+            SizedBox(width: ContextSpacing.xs),
+            Text('Quick Apply Only'),
+          ],
+        ),
+        subtitle: const Text('Show only jobs with simple application forms'),
+        value: _filters.quickApplyOnly,
+        onChanged: (value) {
+          setState(() {
+            _filters = _filters.copyWith(quickApplyOnly: value);
+          });
+        },
+        contentPadding: const EdgeInsets.all(ContextSpacing.md),
+        activeColor: ContextColors.accent,
+      ),
     );
   }
 
@@ -467,10 +537,17 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
           },
           selectedColor: ContextColors.accent,
           backgroundColor: ContextColors.background,
-          shape: const StadiumBorder(
-            side: BorderSide(color: ContextColors.border, width: 2),
+          shape: RoundedRectangleBorder(
+            side: BorderSide(
+              color: isSelected ? ContextColors.borderDark : ContextColors.border,
+              width: 2,
+            ),
           ),
           showCheckmark: false,
+          labelStyle: TextStyle(
+            color: isSelected ? ContextColors.textPrimary : ContextColors.textSecondary,
+            fontWeight: FontWeight.w600,
+          ),
         );
       }).toList(),
     );
@@ -508,10 +585,17 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
           },
           selectedColor: ContextColors.accent,
           backgroundColor: ContextColors.background,
-          shape: const StadiumBorder(
-            side: BorderSide(color: ContextColors.border, width: 2),
+          shape: RoundedRectangleBorder(
+            side: BorderSide(
+              color: isSelected ? ContextColors.borderDark : ContextColors.border,
+              width: 2,
+            ),
           ),
           showCheckmark: false,
+          labelStyle: TextStyle(
+            color: isSelected ? ContextColors.textPrimary : ContextColors.textSecondary,
+            fontWeight: FontWeight.w600,
+          ),
         );
       }).toList(),
     );
@@ -526,18 +610,28 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
   ) {
     return Column(
       children: [
-        TextField(
-          decoration: InputDecoration(
-            hintText: 'Search...',
-            suffixIcon: loading
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.search),
+        Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: ContextColors.border, width: 2),
           ),
-          onChanged: onSearch,
+          child: TextField(
+            decoration: InputDecoration(
+              hintText: 'Search...',
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.all(ContextSpacing.md),
+              suffixIcon: loading
+                  ? const Padding(
+                      padding: EdgeInsets.all(ContextSpacing.md),
+                      child: SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    )
+                  : const Icon(Icons.search),
+            ),
+            onChanged: onSearch,
+          ),
         ),
         const SizedBox(height: ContextSpacing.sm),
         if (selected.isNotEmpty)
@@ -553,6 +647,11 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
                   onChanged(newSelected);
                 },
                 backgroundColor: ContextColors.accent,
+                side: const BorderSide(
+                  color: ContextColors.borderDark,
+                  width: 2,
+                ),
+                shape: const RoundedRectangleBorder(),
               );
             }).toList(),
           ),
@@ -570,7 +669,7 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
                 final isSelected = selected.contains(item);
                 return ListTile(
                   title: Text(item),
-                  trailing: isSelected ? const Icon(Icons.check) : null,
+                  trailing: isSelected ? const Icon(Icons.check, color: ContextColors.success) : null,
                   onTap: () {
                     final newSelected = List<String>.from(selected);
                     if (isSelected) {
@@ -596,69 +695,98 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SwitchListTile(
-          title: const Text('Only show jobs with published salary'),
-          value: _filters.restrictTransparent,
-          onChanged: (value) {
-            setState(() {
-              _filters = _filters.copyWith(restrictTransparent: value);
-            });
-          },
-          contentPadding: EdgeInsets.zero,
-          activeColor: ContextColors.accent,
+        Container(
+          decoration: BoxDecoration(
+            color: _filters.restrictTransparent ? ContextColors.infoLight : null,
+            border: Border.all(
+              color: _filters.restrictTransparent ? ContextColors.info : ContextColors.border,
+              width: 2,
+            ),
+          ),
+          child: SwitchListTile(
+            title: const Text('Only show jobs with published salary'),
+            value: _filters.restrictTransparent,
+            onChanged: (value) {
+              setState(() {
+                _filters = _filters.copyWith(restrictTransparent: value);
+              });
+            },
+            contentPadding: const EdgeInsets.all(ContextSpacing.md),
+            activeColor: ContextColors.info,
+          ),
         ),
         const SizedBox(height: ContextSpacing.md),
-        DropdownButtonFormField<String>(
-          decoration: const InputDecoration(
-            labelText: 'Frequency',
+        Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: ContextColors.border, width: 2),
           ),
-          value: frequency,
-          items: _frequencyOptions.map((String option) {
-            return DropdownMenuItem<String>(
-              value: option,
-              child: Text(option),
-            );
-          }).toList(),
-          onChanged: (String? newValue) {
-            if (newValue != null) {
-              setState(() {
-                _filters = _filters.copyWith(frequency: newValue);
-              });
-            }
-          },
+          child: DropdownButtonFormField<String>(
+            decoration: const InputDecoration(
+              labelText: 'Frequency',
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.all(ContextSpacing.md),
+            ),
+            value: frequency,
+            items: _frequencyOptions.map((String option) {
+              return DropdownMenuItem<String>(
+                value: option,
+                child: Text(option),
+              );
+            }).toList(),
+            onChanged: (String? newValue) {
+              if (newValue != null) {
+                setState(() {
+                  _filters = _filters.copyWith(frequency: newValue);
+                });
+              }
+            },
+          ),
         ),
         const SizedBox(height: ContextSpacing.md),
-        Text(
-          'Salary Range: \$${currentMin.round().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')} - \$${currentMax.round().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-        const SizedBox(height: ContextSpacing.sm),
-        RangeSlider(
-          values: RangeValues(currentMin, currentMax),
-          max: 400000.0,
-          divisions: 80,
-          labels: RangeLabels(
-            '\$${(currentMin / 1000).round()}k',
-            '\$${(currentMax / 1000).round()}k',
+        Container(
+          padding: const EdgeInsets.all(ContextSpacing.md),
+          decoration: BoxDecoration(
+            border: Border.all(color: ContextColors.border, width: 2),
           ),
-          onChanged: (RangeValues values) {
-            _salaryThrottler(() {
-              final minVal = values.start;
-              final maxVal = values.end;
-              
-              final correctedMin = minVal <= maxVal ? minVal : maxVal;
-              final correctedMax = minVal <= maxVal ? maxVal : minVal;
-              
-              setState(() {
-                _filters = _filters.copyWith(
-                  minPay: correctedMin,
-                  maxPay: correctedMax,
-                );
-              });
-            });
-          },
-          activeColor: ContextColors.accent,
-          inactiveColor: ContextColors.border,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Salary Range: \$${currentMin.round().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')} - \$${currentMax.round().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: ContextSpacing.sm),
+              RangeSlider(
+                values: RangeValues(currentMin, currentMax),
+                max: 400000.0,
+                divisions: 80,
+                labels: RangeLabels(
+                  '\$${(currentMin / 1000).round()}k',
+                  '\$${(currentMax / 1000).round()}k',
+                ),
+                onChanged: (RangeValues values) {
+                  _salaryThrottler(() {
+                    final minVal = values.start;
+                    final maxVal = values.end;
+                    
+                    final correctedMin = minVal <= maxVal ? minVal : maxVal;
+                    final correctedMax = minVal <= maxVal ? maxVal : minVal;
+                    
+                    setState(() {
+                      _filters = _filters.copyWith(
+                        minPay: correctedMin,
+                        maxPay: correctedMax,
+                      );
+                    });
+                  });
+                },
+                activeColor: ContextColors.accent,
+                inactiveColor: ContextColors.border,
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -669,16 +797,36 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
     String? selected,
     void Function(String?) onChanged,
   ) {
-    return Column(
-      children: options.map((option) {
-        return RadioListTile<String>(
-          title: Text(option),
-          value: option,
-          groupValue: selected,
-          onChanged: onChanged,
-          contentPadding: EdgeInsets.zero,
-        );
-      }).toList(),
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: ContextColors.border, width: 2),
+      ),
+      child: Column(
+        children: options.asMap().entries.map((entry) {
+          final index = entry.key;
+          final option = entry.value;
+          final isLast = index == options.length - 1;
+          
+          return Container(
+            decoration: BoxDecoration(
+              border: isLast ? null : const Border(
+                bottom: BorderSide(color: ContextColors.border, width: 1),
+              ),
+            ),
+            child: RadioListTile<String>(
+              title: Text(option),
+              value: option,
+              groupValue: selected,
+              onChanged: onChanged,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: ContextSpacing.md,
+                vertical: ContextSpacing.xs,
+              ),
+              activeColor: ContextColors.accent,
+            ),
+          );
+        }).toList(),
+      ),
     );
   }
 }

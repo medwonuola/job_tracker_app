@@ -40,49 +40,85 @@ class JobPerksRow extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Benefits & Perks',
-          style: textTheme.labelLarge?.copyWith(
-            color: ContextColors.textPrimary,
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(ContextSpacing.md),
+          decoration: BoxDecoration(
+            color: ContextColors.accent,
+            border: Border.all(
+              color: ContextColors.borderDark,
+              width: 2,
+            ),
+          ),
+          child: Row(
+            children: [
+              const Icon(
+                Icons.star,
+                color: ContextColors.textPrimary,
+              ),
+              const SizedBox(width: ContextSpacing.sm),
+              Text(
+                'Benefits & Perks',
+                style: textTheme.labelLarge?.copyWith(
+                  color: ContextColors.textPrimary,
+                ),
+              ),
+            ],
           ),
         ),
-        const SizedBox(height: ContextSpacing.sm),
-        Wrap(
-          spacing: ContextSpacing.sm,
-          runSpacing: ContextSpacing.sm,
-          children: perks.map((perk) {
-            return Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: ContextSpacing.sm,
-                vertical: ContextSpacing.xs,
-              ),
-              decoration: BoxDecoration(
-                color: ContextColors.accent.withAlpha(38),
-                border: Border.all(
-                  color: ContextColors.accent,
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(ContextSpacing.lg),
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: ContextColors.border,
+              width: 2,
+            ),
+          ),
+          child: Wrap(
+            spacing: ContextSpacing.md,
+            runSpacing: ContextSpacing.md,
+            children: perks.map((perk) {
+              return Container(
+                padding: const EdgeInsets.all(ContextSpacing.md),
+                decoration: BoxDecoration(
+                  color: ContextColors.neutralLight,
+                  border: Border.all(
+                    color: ContextColors.border,
+                    width: 2,
+                  ),
                 ),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    _getIconForPerk(perk),
-                    size: 16,
-                    color: ContextColors.textPrimary,
-                  ),
-                  const SizedBox(width: ContextSpacing.xs),
-                  Text(
-                    perk,
-                    style: textTheme.bodySmall?.copyWith(
-                      color: ContextColors.textPrimary,
-                      fontWeight: FontWeight.w600,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(ContextSpacing.xs),
+                      decoration: BoxDecoration(
+                        color: ContextColors.accent,
+                        border: Border.all(
+                          color: ContextColors.borderDark,
+                          width: 2,
+                        ),
+                      ),
+                      child: Icon(
+                        _getIconForPerk(perk),
+                        size: 18,
+                        color: ContextColors.textPrimary,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
+                    const SizedBox(width: ContextSpacing.sm),
+                    Text(
+                      perk,
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: ContextColors.textPrimary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
         ),
       ],
     );

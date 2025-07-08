@@ -45,56 +45,150 @@ class _JobSearchScreenState extends State<JobSearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Context Job Search'),
+        title: const Text('Job Search'),
+        backgroundColor: ContextColors.background,
+        surfaceTintColor: Colors.transparent,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(2),
+          child: Container(
+            height: 2,
+            color: ContextColors.border,
+          ),
+        ),
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(ContextSpacing.md),
-            child: Row(
+          Container(
+            padding: const EdgeInsets.all(ContextSpacing.lg),
+            decoration: const BoxDecoration(
+              color: ContextColors.background,
+              border: Border(
+                bottom: BorderSide(color: ContextColors.border, width: 2),
+              ),
+            ),
+            child: Column(
               children: [
-                Expanded(
-                  child: TextField(
-                    controller: _searchController,
-                    decoration: InputDecoration(
-                      hintText: 'e.g., "Flutter Developer"',
-                      suffixIcon: IconButton(
-                        icon: const Icon(
-                          Icons.search,
-                          color: ContextColors.textSecondary,
-                        ),
-                        onPressed: _performSearch,
-                      ),
-                    ),
-                    onSubmitted: (_) => _performSearch(),
-                    textInputAction: TextInputAction.search,
-                    style: ContextTypography.bodyMd
-                        .copyWith(color: ContextColors.textPrimary),
-                  ),
-                ),
-                const SizedBox(width: ContextSpacing.sm),
-                Consumer<JobSearchProvider>(
-                  builder: (context, provider, child) {
-                    return IconButton(
-                      onPressed: _showFilters,
-                      icon: Icon(
-                        Icons.tune,
-                        color: provider.hasActiveFilters
-                            ? ContextColors.accent
-                            : ContextColors.textSecondary,
-                      ),
-                      style: IconButton.styleFrom(
-                        backgroundColor: provider.hasActiveFilters
-                            ? ContextColors.accent.withAlpha(38)
-                            : null,
-                        shape: const RoundedRectangleBorder(
-                          side: BorderSide(
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
                             color: ContextColors.border,
                             width: 2.0,
                           ),
                         ),
+                        child: TextField(
+                          controller: _searchController,
+                          decoration: InputDecoration(
+                            hintText: 'Search jobs (e.g. "Flutter Developer")',
+                            border: InputBorder.none,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: ContextSpacing.md,
+                              vertical: ContextSpacing.md,
+                            ),
+                            suffixIcon: Container(
+                              margin: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: ContextColors.accent,
+                                border: Border.all(
+                                  color: ContextColors.borderDark,
+                                  width: 2,
+                                ),
+                              ),
+                              child: IconButton(
+                                icon: const Icon(
+                                  Icons.search,
+                                  color: ContextColors.textPrimary,
+                                ),
+                                onPressed: _performSearch,
+                              ),
+                            ),
+                          ),
+                          onSubmitted: (_) => _performSearch(),
+                          textInputAction: TextInputAction.search,
+                          style: ContextTypography.bodyMd
+                              .copyWith(color: ContextColors.textPrimary),
+                        ),
                       ),
-                    );
+                    ),
+                    const SizedBox(width: ContextSpacing.md),
+                    Consumer<JobSearchProvider>(
+                      builder: (context, provider, child) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            color: provider.hasActiveFilters
+                                ? ContextColors.accent
+                                : ContextColors.background,
+                            border: Border.all(
+                              color: provider.hasActiveFilters
+                                  ? ContextColors.borderDark
+                                  : ContextColors.border,
+                              width: 2.0,
+                            ),
+                          ),
+                          child: IconButton(
+                            onPressed: _showFilters,
+                            icon: Icon(
+                              Icons.tune,
+                              color: provider.hasActiveFilters
+                                  ? ContextColors.textPrimary
+                                  : ContextColors.textSecondary,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: ContextSpacing.md),
+                Consumer<JobSearchProvider>(
+                  builder: (context, provider, child) {
+                    if (provider.hasActiveFilters) {
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: ContextSpacing.md,
+                          vertical: ContextSpacing.sm,
+                        ),
+                        decoration: BoxDecoration(
+                          color: ContextColors.accent.withAlpha(51),
+                          border: Border.all(
+                            color: ContextColors.accent,
+                            width: 2,
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.filter_alt,
+                              size: 16,
+                              color: ContextColors.textPrimary,
+                            ),
+                            const SizedBox(width: ContextSpacing.xs),
+                            const Text(
+                              'Filters applied',
+                              style: TextStyle(
+                                color: ContextColors.textPrimary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const Spacer(),
+                            GestureDetector(
+                              onTap: provider.clearFilters,
+                              child: const Text(
+                                'Clear',
+                                style: TextStyle(
+                                  color: ContextColors.textPrimary,
+                                  fontWeight: FontWeight.w600,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
                   },
                 ),
               ],
@@ -106,24 +200,106 @@ class _JobSearchScreenState extends State<JobSearchScreen> {
                 switch (provider.state) {
                   case SearchState.loading:
                     return const Center(
-                      child: CircularProgressIndicator(
-                        color: ContextColors.textPrimary,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircularProgressIndicator(
+                            color: ContextColors.accent,
+                            strokeWidth: 3,
+                          ),
+                          SizedBox(height: ContextSpacing.md),
+                          Text(
+                            'Searching for jobs...',
+                            style: TextStyle(
+                              color: ContextColors.textSecondary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
                       ),
                     );
                   case SearchState.error:
                     return Center(
-                      child: Text('Error: ${provider.errorMessage}'),
+                      child: Container(
+                        margin: const EdgeInsets.all(ContextSpacing.lg),
+                        padding: const EdgeInsets.all(ContextSpacing.lg),
+                        decoration: BoxDecoration(
+                          color: ContextColors.warningLight,
+                          border: Border.all(
+                            color: ContextColors.warning,
+                            width: 2,
+                          ),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.error_outline,
+                              color: ContextColors.warning,
+                              size: 48,
+                            ),
+                            const SizedBox(height: ContextSpacing.md),
+                            Text(
+                              'Search Error',
+                              style: ContextTypography.h4.copyWith(
+                                color: ContextColors.warning,
+                              ),
+                            ),
+                            const SizedBox(height: ContextSpacing.sm),
+                            Text(
+                              provider.errorMessage,
+                              textAlign: TextAlign.center,
+                              style: ContextTypography.bodyMd.copyWith(
+                                color: ContextColors.textPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     );
                   case SearchState.loaded:
                     if (provider.jobs.isEmpty) {
-                      return const Center(
-                        child: Text('No jobs found. Try another search.'),
+                      return Center(
+                        child: Container(
+                          margin: const EdgeInsets.all(ContextSpacing.lg),
+                          padding: const EdgeInsets.all(ContextSpacing.lg),
+                          decoration: BoxDecoration(
+                            color: ContextColors.neutralLight,
+                            border: Border.all(
+                              color: ContextColors.border,
+                              width: 2,
+                            ),
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.search_off,
+                                color: ContextColors.neutral,
+                                size: 48,
+                              ),
+                              const SizedBox(height: ContextSpacing.md),
+                              Text(
+                                'No Jobs Found',
+                                style: ContextTypography.h4.copyWith(
+                                  color: ContextColors.textPrimary,
+                                ),
+                              ),
+                              const SizedBox(height: ContextSpacing.sm),
+                              const Text(
+                                'Try adjusting your search terms or filters',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: ContextColors.textSecondary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       );
                     }
                     return ListView.builder(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: ContextSpacing.md,
-                      ),
+                      padding: const EdgeInsets.all(ContextSpacing.lg),
                       itemCount: provider.jobs.length,
                       itemBuilder: (context, index) {
                         final job = provider.jobs[index];
@@ -141,8 +317,50 @@ class _JobSearchScreenState extends State<JobSearchScreen> {
                       },
                     );
                   case SearchState.initial:
-                    return const Center(
-                      child: Text('Search for jobs to get started.'),
+                    return Center(
+                      child: Container(
+                        margin: const EdgeInsets.all(ContextSpacing.lg),
+                        padding: const EdgeInsets.all(ContextSpacing.xl),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: ContextColors.border,
+                            width: 2,
+                          ),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(ContextSpacing.lg),
+                              decoration: BoxDecoration(
+                                color: ContextColors.accent,
+                                border: Border.all(
+                                  color: ContextColors.borderDark,
+                                  width: 2,
+                                ),
+                              ),
+                              child: const Icon(
+                                Icons.search,
+                                color: ContextColors.textPrimary,
+                                size: 48,
+                              ),
+                            ),
+                            const SizedBox(height: ContextSpacing.lg),
+                            Text(
+                              'Search for Jobs',
+                              style: ContextTypography.h3,
+                            ),
+                            const SizedBox(height: ContextSpacing.sm),
+                            const Text(
+                              'Enter keywords to find your next opportunity',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: ContextColors.textSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     );
                 }
               },

@@ -20,38 +20,43 @@ class JobListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    return Stack(
-      children: [
-        BorderedCard(
-          onTap: onTap,
-          child: Row(
+    return BorderedCard(
+      onTap: onTap,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CachedNetworkImage(
-                imageUrl: job.company.image ?? '',
-                imageBuilder: (context, imageProvider) => Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    image:
-                        DecorationImage(image: imageProvider, fit: BoxFit.contain),
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: ContextColors.neutralLight,
+                  border: Border.all(
+                    color: ContextColors.border,
+                    width: 2,
                   ),
                 ),
-                placeholder: (context, url) => Container(
-                  width: 50,
-                  height: 50,
-                  color: ContextColors.background,
-                  child: const Icon(
-                    Icons.business,
-                    color: ContextColors.textSecondary,
+                child: CachedNetworkImage(
+                  imageUrl: job.company.image ?? '',
+                  imageBuilder: (context, imageProvider) => Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
                   ),
-                ),
-                errorWidget: (context, url, error) => Container(
-                  width: 50,
-                  height: 50,
-                  color: ContextColors.background,
-                  child: const Icon(
+                  placeholder: (context, url) => const Icon(
                     Icons.business,
-                    color: ContextColors.textSecondary,
+                    color: ContextColors.neutral,
+                    size: 24,
+                  ),
+                  errorWidget: (context, url, error) => const Icon(
+                    Icons.business,
+                    color: ContextColors.neutral,
+                    size: 24,
                   ),
                 ),
               ),
@@ -60,31 +65,100 @@ class JobListItem extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      job.title,
-                      style: textTheme.labelLarge
-                          ?.copyWith(color: ContextColors.textPrimary),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            job.title,
+                            style: textTheme.labelLarge?.copyWith(
+                              color: ContextColors.textPrimary,
+                              height: 1.3,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        if (job.isQuickApply) ...[
+                          const SizedBox(width: ContextSpacing.sm),
+                          const QuickApplyBadge(size: 20.0),
+                        ],
+                      ],
                     ),
                     const SizedBox(height: ContextSpacing.xs),
                     Text(
                       job.company.name,
-                      style: textTheme.bodyMedium,
+                      style: textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: ContextSpacing.xs),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.location_on_outlined,
+                          size: 16,
+                          color: ContextColors.textSecondary,
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            job.location.formattedAddress,
+                            style: textTheme.bodySmall,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
             ],
           ),
+          if (job.perks.isNotEmpty || job.isRemote || job.company.industry != null) ...[
+            const SizedBox(height: ContextSpacing.md),
+            Wrap(
+              spacing: ContextSpacing.xs,
+              runSpacing: ContextSpacing.xs,
+              children: [
+                if (job.isRemote)
+                  _buildTag('Remote', ContextColors.success),
+                if (job.company.industry != null)
+                  _buildTag(job.company.industry!, ContextColors.info),
+                ...job.perks.take(2).map((perk) => _buildTag(perk, ContextColors.neutral)),
+                if (job.perks.length > 2)
+                  _buildTag('+${job.perks.length - 2} more', ContextColors.accent),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTag(String text, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: ContextSpacing.sm,
+        vertical: 2,
+      ),
+      decoration: BoxDecoration(
+        color: color.withAlpha(25),
+        border: Border.all(
+          color: color.withAlpha(76),
+          width: 1,
         ),
-        if (job.isQuickApply)
-          Positioned(
-            top: ContextSpacing.sm,
-            right: ContextSpacing.sm,
-            child: const QuickApplyBadge(size: 20.0),
-          ),
-      ],
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: color == ContextColors.accent 
+              ? ContextColors.textPrimary 
+              : color,
+        ),
+      ),
     );
   }
 }
