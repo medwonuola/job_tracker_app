@@ -53,40 +53,40 @@ class JobPerksRow extends StatelessWidget {
           'Benefits & Perks',
           style: textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.w800,
-            color: ContextColors.textPrimary,
+            color: AppColors.textPrimary,
           ),
         ),
-        const SizedBox(height: ContextSpacing.lg),
+        const SizedBox(height: AppSpacing.lg),
         Wrap(
-          spacing: ContextSpacing.lg,
-          runSpacing: ContextSpacing.lg,
+          spacing: AppSpacing.lg,
+          runSpacing: AppSpacing.lg,
           children: perks.map((perk) {
             return Container(
               constraints: const BoxConstraints(minWidth: 140),
-              padding: const EdgeInsets.all(ContextSpacing.lg),
+              padding: const EdgeInsets.all(AppSpacing.lg),
               decoration: const BoxDecoration(
-                color: ContextColors.neutralLight,
+                color: AppColors.neutralLight,
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(ContextSpacing.md),
+                    padding: const EdgeInsets.all(AppSpacing.md),
                     decoration: const BoxDecoration(
-                      color: ContextColors.accent,
+                      color: AppColors.accent,
                     ),
                     child: Icon(
                       _getIconForPerk(perk),
                       size: 24,
-                      color: ContextColors.textPrimary,
+                      color: AppColors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: ContextSpacing.md),
+                  const SizedBox(height: AppSpacing.md),
                   Text(
                     perk,
                     textAlign: TextAlign.center,
                     style: textTheme.bodyMedium?.copyWith(
-                      color: ContextColors.textPrimary,
+                      color: AppColors.textPrimary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

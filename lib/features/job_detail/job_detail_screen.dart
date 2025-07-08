@@ -5,7 +5,7 @@ import 'package:job_tracker_app/core/constants/app_constants.dart';
 import 'package:job_tracker_app/core/theme/app_colors.dart';
 import 'package:job_tracker_app/core/theme/app_spacing.dart';
 import 'package:job_tracker_app/core/utils/url_launcher.dart';
-import 'package:job_tracker_app/core/widgets/context_button.dart';
+import 'package:job_tracker_app/core/widgets/app_button.dart';
 import 'package:job_tracker_app/core/widgets/quick_apply_badge.dart';
 import 'package:job_tracker_app/data/models/job.dart';
 import 'package:job_tracker_app/data/providers/application_tracker_provider.dart';
@@ -29,7 +29,7 @@ class JobDetailScreen extends StatelessWidget {
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
       title: Text(job.company.name),
-      backgroundColor: ContextColors.background,
+      backgroundColor: AppColors.background,
       surfaceTintColor: Colors.transparent,
       actions: [_buildBookmarkButton(context)],
     );
@@ -43,7 +43,7 @@ class JobDetailScreen extends StatelessWidget {
         return IconButton(
           icon: Icon(
             isTracked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-            color: isTracked ? ContextColors.accent : ContextColors.textSecondary,
+            color: isTracked ? AppColors.accent : AppColors.textSecondary,
           ),
           onPressed: () => _toggleJobTracking(context, provider, isTracked),
         );
@@ -78,13 +78,13 @@ class JobDetailScreen extends StatelessWidget {
   Widget _buildJobHeader(BuildContext context) {
     return Container(
       width: double.infinity,
-      color: ContextColors.neutralLight,
-      padding: const EdgeInsets.all(ContextSpacing.xl),
+      color: AppColors.neutralLight,
+      padding: const EdgeInsets.all(AppSpacing.xl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildCompanyLogoAndDetails(context),
-          const SizedBox(height: ContextSpacing.xl),
+          const SizedBox(height: AppSpacing.xl),
           _buildJobTags(),
         ],
       ),
@@ -98,14 +98,14 @@ class JobDetailScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildCompanyLogo(),
-        const SizedBox(width: ContextSpacing.xl),
+        const SizedBox(width: AppSpacing.xl),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (job.isQuickApply) ...[
                 const Padding(
-                  padding: EdgeInsets.only(bottom: ContextSpacing.md),
+                  padding: EdgeInsets.only(bottom: AppSpacing.md),
                   child: QuickApplyBadge(showText: true),
                 ),
               ],
@@ -113,18 +113,18 @@ class JobDetailScreen extends StatelessWidget {
                 job.title,
                 style: textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.w800,
-                  color: ContextColors.textPrimary,
+                  color: AppColors.textPrimary,
                 ),
               ),
-              const SizedBox(height: ContextSpacing.sm),
+              const SizedBox(height: AppSpacing.sm),
               Text(
                 job.company.name,
                 style: textTheme.titleLarge?.copyWith(
-                  color: ContextColors.textSecondary,
+                  color: AppColors.textSecondary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(height: ContextSpacing.sm),
+              const SizedBox(height: AppSpacing.sm),
               _buildLocationInfo(textTheme),
             ],
           ),
@@ -137,7 +137,7 @@ class JobDetailScreen extends StatelessWidget {
     return Container(
       width: AppConstants.largeLogoSize.toDouble(),
       height: AppConstants.largeLogoSize.toDouble(),
-      color: ContextColors.background,
+      color: AppColors.background,
       child: CachedNetworkImage(
         imageUrl: job.company.image ?? '',
         imageBuilder: (context, imageProvider) => Image(
@@ -146,12 +146,12 @@ class JobDetailScreen extends StatelessWidget {
         ),
         placeholder: (context, url) => const Icon(
           Icons.domain_rounded,
-          color: ContextColors.neutral,
+          color: AppColors.neutral,
           size: 32,
         ),
         errorWidget: (context, url, error) => const Icon(
           Icons.domain_rounded,
-          color: ContextColors.neutral,
+          color: AppColors.neutral,
           size: 32,
         ),
       ),
@@ -164,14 +164,14 @@ class JobDetailScreen extends StatelessWidget {
         const Icon(
           Icons.location_on_outlined,
           size: 18,
-          color: ContextColors.textSecondary,
+          color: AppColors.textSecondary,
         ),
-        const SizedBox(width: ContextSpacing.xs),
+        const SizedBox(width: AppSpacing.xs),
         Expanded(
           child: Text(
             job.location.formattedAddress,
             style: textTheme.bodyLarge?.copyWith(
-              color: ContextColors.textSecondary,
+              color: AppColors.textSecondary,
             ),
           ),
         ),
@@ -181,12 +181,12 @@ class JobDetailScreen extends StatelessWidget {
 
   Widget _buildJobTags() {
     return Wrap(
-      spacing: ContextSpacing.md,
-      runSpacing: ContextSpacing.sm,
+      spacing: AppSpacing.md,
+      runSpacing: AppSpacing.sm,
       children: [
-        if (job.isRemote) _buildInfoChip('Remote Work', ContextColors.success),
+        if (job.isRemote) _buildInfoChip('Remote Work', AppColors.success),
         if (job.company.industry != null)
-          _buildInfoChip(job.company.industry!, ContextColors.info),
+          _buildInfoChip(job.company.industry!, AppColors.info),
       ],
     );
   }
@@ -194,8 +194,8 @@ class JobDetailScreen extends StatelessWidget {
   Widget _buildInfoChip(String text, Color color) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: ContextSpacing.md,
-        vertical: ContextSpacing.sm,
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
       ),
       decoration: BoxDecoration(color: color.withAlpha(25)),
       child: Text(
@@ -213,22 +213,22 @@ class JobDetailScreen extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     
     return Padding(
-      padding: const EdgeInsets.all(ContextSpacing.xl),
+      padding: const EdgeInsets.all(AppSpacing.xl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (job.perks.isNotEmpty) ...[
             JobPerksRow(perks: job.perks),
-            const SizedBox(height: ContextSpacing.xxl),
+            const SizedBox(height: AppSpacing.xxl),
           ],
           Text(
             'Job Description',
             style: textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.w800,
-              color: ContextColors.textPrimary,
+              color: AppColors.textPrimary,
             ),
           ),
-          const SizedBox(height: ContextSpacing.lg),
+          const SizedBox(height: AppSpacing.lg),
           _buildJobDescription(textTheme),
         ],
       ),
@@ -242,19 +242,19 @@ class JobDetailScreen extends StatelessWidget {
         'body': Style.fromTextStyle(
           textTheme.bodyLarge!.copyWith(
             height: 1.6,
-            color: ContextColors.textPrimary,
+            color: AppColors.textPrimary,
           ),
         ),
         'h1, h2, h3, h4, h5, h6': Style.fromTextStyle(
           textTheme.titleLarge!.copyWith(
             fontWeight: FontWeight.w700,
-            color: ContextColors.textPrimary,
+            color: AppColors.textPrimary,
           ),
         ),
         'p': Style.fromTextStyle(
           textTheme.bodyLarge!.copyWith(
             height: 1.6,
-            color: ContextColors.textPrimary,
+            color: AppColors.textPrimary,
           ),
         ),
       },
@@ -267,10 +267,10 @@ class JobDetailScreen extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.all(ContextSpacing.xl),
+      padding: const EdgeInsets.all(AppSpacing.xl),
       decoration: const BoxDecoration(
-        color: ContextColors.background,
-        border: Border(top: BorderSide(color: ContextColors.border)),
+        color: AppColors.background,
+        border: Border(top: BorderSide(color: AppColors.border)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -278,10 +278,10 @@ class JobDetailScreen extends StatelessWidget {
           if (job.isQuickApply) _buildQuickApplyBanner(context),
           SizedBox(
             width: double.infinity,
-            child: ContextButton(
+            child: AppButton(
               label: 'Apply for this Job',
               icon: Icons.open_in_new_rounded,
-              variant: ContextButtonVariant.success,
+              variant: AppButtonVariant.success,
               onPressed: () => _applyForJob(),
             ),
           ),
@@ -295,22 +295,22 @@ class JobDetailScreen extends StatelessWidget {
     
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(ContextSpacing.md),
-      margin: const EdgeInsets.only(bottom: ContextSpacing.lg),
-      decoration: BoxDecoration(color: ContextColors.accent.withAlpha(51)),
+      padding: const EdgeInsets.all(AppSpacing.md),
+      margin: const EdgeInsets.only(bottom: AppSpacing.lg),
+      decoration: BoxDecoration(color: AppColors.accent.withAlpha(51)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Icon(
             Icons.flash_on_rounded,
-            color: ContextColors.textPrimary,
+            color: AppColors.textPrimary,
             size: 20,
           ),
-          const SizedBox(width: ContextSpacing.sm),
+          const SizedBox(width: AppSpacing.sm),
           Text(
             'Quick & Easy Application',
             style: textTheme.bodyMedium?.copyWith(
-              color: ContextColors.textPrimary,
+              color: AppColors.textPrimary,
               fontWeight: FontWeight.w600,
             ),
           ),

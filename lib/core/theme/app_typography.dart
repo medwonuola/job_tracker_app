@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
-class ContextTypography {
+class AppTypography {
   static final String fontFamily = GoogleFonts.manrope().fontFamily!;
 
   static final TextStyle h1 = TextStyle(
@@ -11,7 +11,7 @@ class ContextTypography {
     fontWeight: FontWeight.w800,
     height: 1.1,
     letterSpacing: -2.5,
-    color: ContextColors.textPrimary,
+    color: AppColors.textPrimary,
   );
 
   static final TextStyle h2 = TextStyle(
@@ -20,7 +20,7 @@ class ContextTypography {
     fontWeight: FontWeight.w800,
     height: 1.2,
     letterSpacing: -2.0,
-    color: ContextColors.textPrimary,
+    color: AppColors.textPrimary,
   );
 
   static final TextStyle h3 = TextStyle(
@@ -29,7 +29,7 @@ class ContextTypography {
     fontWeight: FontWeight.w800,
     height: 1.25,
     letterSpacing: -1.5,
-    color: ContextColors.textPrimary,
+    color: AppColors.textPrimary,
   );
 
   static final TextStyle h4 = TextStyle(
@@ -37,7 +37,7 @@ class ContextTypography {
     fontSize: 22,
     fontWeight: FontWeight.w800,
     height: 1.3,
-    color: ContextColors.textPrimary,
+    color: AppColors.textPrimary,
   );
 
   static final TextStyle bodyLg = TextStyle(
@@ -45,7 +45,7 @@ class ContextTypography {
     fontSize: 18,
     fontWeight: FontWeight.w400,
     height: 1.6,
-    color: ContextColors.textSecondary,
+    color: AppColors.textSecondary,
   );
 
   static final TextStyle bodyMd = TextStyle(
@@ -53,7 +53,7 @@ class ContextTypography {
     fontSize: 16,
     fontWeight: FontWeight.w400,
     height: 1.6,
-    color: ContextColors.textSecondary,
+    color: AppColors.textSecondary,
   );
 
   static final TextStyle bodySm = TextStyle(
@@ -61,6 +61,6 @@ class ContextTypography {
     fontSize: 14,
     fontWeight: FontWeight.w400,
     height: 1.5,
-    color: ContextColors.textSecondary,
+    color: AppColors.textSecondary,
   );
 }

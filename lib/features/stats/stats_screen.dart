@@ -32,11 +32,11 @@ class StatsScreen extends StatelessWidget {
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
       title: const Text('Analytics Dashboard'),
-      backgroundColor: ContextColors.background,
+      backgroundColor: AppColors.background,
       surfaceTintColor: Colors.transparent,
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(2),
-        child: Container(height: 2, color: ContextColors.border),
+        child: Container(height: 2, color: AppColors.border),
       ),
     );
   }
@@ -46,31 +46,31 @@ class StatsScreen extends StatelessWidget {
       title: 'No Analytics Data',
       message: 'Track job applications to see your analytics here',
       icon: Icons.bar_chart,
-      backgroundColor: ContextColors.neutralLight,
-      borderColor: ContextColors.border,
+      backgroundColor: AppColors.neutralLight,
+      borderColor: AppColors.border,
     );
   }
 
   Widget _buildStatsContent(StatsData stats) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(ContextSpacing.lg),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildSummarySection(stats),
-          const SizedBox(height: ContextSpacing.xl),
+          const SizedBox(height: AppSpacing.xl),
           _buildChartSection(
             title: 'Status Distribution',
             icon: Icons.pie_chart,
             child: ApplicationStatusChart(statusCounts: stats.statusCounts),
           ),
-          const SizedBox(height: ContextSpacing.xl),
+          const SizedBox(height: AppSpacing.xl),
           _buildChartSection(
             title: 'Time in Each Status',
             icon: Icons.access_time,
             child: TimeSpentChart(averageDaysInStatus: stats.averageDaysInStatus),
           ),
-          const SizedBox(height: ContextSpacing.xl),
+          const SizedBox(height: AppSpacing.xl),
           _buildChartSection(
             title: 'Application Trend',
             icon: Icons.trending_up,
@@ -93,16 +93,16 @@ class StatsScreen extends StatelessWidget {
                 'Total Applications',
                 stats.totalApplications.toString(),
                 Icons.work_outline,
-                ContextColors.info,
+                AppColors.info,
               ),
             ),
-            const SizedBox(width: ContextSpacing.md),
+            const SizedBox(width: AppSpacing.md),
             Expanded(
               child: _buildSummaryCard(
                 'Weekly Average',
                 stats.averageApplicationsPerWeek.toStringAsFixed(1),
                 Icons.timeline,
-                ContextColors.success,
+                AppColors.success,
               ),
             ),
           ],
@@ -114,19 +114,19 @@ class StatsScreen extends StatelessWidget {
   Widget _buildSectionHeader(String title, IconData icon) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(ContextSpacing.md),
+      padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: ContextColors.accent,
-        border: Border.all(color: ContextColors.borderDark),
+        color: AppColors.accent,
+        border: Border.all(color: AppColors.borderDark),
       ),
       child: Row(
         children: [
-          Icon(icon, color: ContextColors.textPrimary),
-          const SizedBox(width: ContextSpacing.sm),
+          Icon(icon, color: AppColors.textPrimary),
+          const SizedBox(width: AppSpacing.sm),
           Text(
             title,
             style: const TextStyle(
-              color: ContextColors.textPrimary,
+              color: AppColors.textPrimary,
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -142,7 +142,7 @@ class StatsScreen extends StatelessWidget {
     Color color,
   ) {
     return Container(
-      padding: const EdgeInsets.all(ContextSpacing.lg),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
         color: color.withAlpha(25),
         border: Border.all(color: color.withAlpha(76)),
@@ -153,14 +153,14 @@ class StatsScreen extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(ContextSpacing.xs),
+                padding: const EdgeInsets.all(AppSpacing.xs),
                 decoration: BoxDecoration(
                   color: color,
                   border: Border.all(color: color),
                 ),
                 child: Icon(icon, color: Colors.white),
               ),
-              const SizedBox(width: ContextSpacing.sm),
+              const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: Text(
                   title,
@@ -173,7 +173,7 @@ class StatsScreen extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: ContextSpacing.md),
+          const SizedBox(height: AppSpacing.md),
           Text(
             value,
             style: TextStyle(
@@ -196,19 +196,19 @@ class StatsScreen extends StatelessWidget {
       children: [
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(ContextSpacing.md),
+          padding: const EdgeInsets.all(AppSpacing.md),
           decoration: BoxDecoration(
-            color: ContextColors.neutralLight,
-            border: Border.all(color: ContextColors.border),
+            color: AppColors.neutralLight,
+            border: Border.all(color: AppColors.border),
           ),
           child: Row(
             children: [
-              Icon(icon, color: ContextColors.textPrimary),
-              const SizedBox(width: ContextSpacing.sm),
+              Icon(icon, color: AppColors.textPrimary),
+              const SizedBox(width: AppSpacing.sm),
               Text(
                 title,
                 style: const TextStyle(
-                  color: ContextColors.textPrimary,
+                  color: AppColors.textPrimary,
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -217,9 +217,9 @@ class StatsScreen extends StatelessWidget {
         ),
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(ContextSpacing.lg),
+          padding: const EdgeInsets.all(AppSpacing.lg),
           decoration: BoxDecoration(
-            border: Border.all(color: ContextColors.border),
+            border: Border.all(color: AppColors.border),
           ),
           child: child,
         ),

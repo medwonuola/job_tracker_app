@@ -38,10 +38,10 @@ class ApplicationStatusChart extends StatelessWidget {
         Text(
           'Application Status Distribution',
           style: textTheme.labelLarge?.copyWith(
-            color: ContextColors.textPrimary,
+            color: AppColors.textPrimary,
           ),
         ),
-        const SizedBox(height: ContextSpacing.md),
+        const SizedBox(height: AppSpacing.md),
         SizedBox(
           height: 200,
           child: Row(
@@ -56,7 +56,7 @@ class ApplicationStatusChart extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: ContextSpacing.md),
+              const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: _buildLegend(context),
               ),
@@ -69,7 +69,7 @@ class ApplicationStatusChart extends StatelessWidget {
 
   List<PieChartSectionData> _buildPieChartSections() {
     final colors = [
-      ContextColors.accent,
+      AppColors.accent,
       Colors.blue,
       Colors.orange,
       Colors.green,
@@ -104,7 +104,7 @@ class ApplicationStatusChart extends StatelessWidget {
   Widget _buildLegend(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final colors = [
-      ContextColors.accent,
+      AppColors.accent,
       Colors.blue,
       Colors.orange,
       Colors.green,
@@ -125,7 +125,7 @@ class ApplicationStatusChart extends StatelessWidget {
         final count = statusEntry.value;
 
         return Padding(
-          padding: const EdgeInsets.only(bottom: ContextSpacing.xs),
+          padding: const EdgeInsets.only(bottom: AppSpacing.xs),
           child: Row(
             children: [
               Container(
@@ -136,7 +136,7 @@ class ApplicationStatusChart extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
               ),
-              const SizedBox(width: ContextSpacing.xs),
+              const SizedBox(width: AppSpacing.xs),
               Expanded(
                 child: Text(
                   '${status.displayName} ($count)',

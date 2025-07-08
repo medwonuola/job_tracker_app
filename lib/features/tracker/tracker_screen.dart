@@ -23,15 +23,15 @@ class _TrackerScreenState extends State<TrackerScreen> {
   static Color _getStatusColor(ApplicationStatus status) {
     switch (status) {
       case ApplicationStatus.saved:
-        return ContextColors.neutral;
+        return AppColors.neutral;
       case ApplicationStatus.applied:
-        return ContextColors.info;
+        return AppColors.info;
       case ApplicationStatus.interviewing:
-        return ContextColors.warning;
+        return AppColors.warning;
       case ApplicationStatus.offered:
-        return ContextColors.success;
+        return AppColors.success;
       case ApplicationStatus.rejected:
-        return ContextColors.warning;
+        return AppColors.warning;
     }
   }
 
@@ -58,11 +58,11 @@ class _TrackerScreenState extends State<TrackerScreen> {
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
       title: const Text('Application Tracker'),
-      backgroundColor: ContextColors.background,
+      backgroundColor: AppColors.background,
       surfaceTintColor: Colors.transparent,
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(2),
-        child: Container(height: 2, color: ContextColors.border),
+        child: Container(height: 2, color: AppColors.border),
       ),
     );
   }
@@ -72,8 +72,8 @@ class _TrackerScreenState extends State<TrackerScreen> {
       title: 'No Applications Tracked',
       message: 'Start tracking your job applications to see them here',
       icon: Icons.work_outline,
-      backgroundColor: ContextColors.neutralLight,
-      borderColor: ContextColors.border,
+      backgroundColor: AppColors.neutralLight,
+      borderColor: AppColors.border,
     );
   }
 
@@ -98,16 +98,16 @@ class _TrackerScreenState extends State<TrackerScreen> {
 
   Widget _buildFilterSection(List<Job> allJobs, Map<ApplicationStatus, int> statusCounts) {
     return Container(
-      padding: const EdgeInsets.all(ContextSpacing.lg),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: const BoxDecoration(
-        color: ContextColors.neutralLight,
-        border: Border(bottom: BorderSide(color: ContextColors.border)),
+        color: AppColors.neutralLight,
+        border: Border(bottom: BorderSide(color: AppColors.border)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildFilterHeader(),
-          const SizedBox(height: ContextSpacing.md),
+          const SizedBox(height: AppSpacing.md),
           _buildFilterChips(allJobs, statusCounts),
         ],
       ),
@@ -117,12 +117,12 @@ class _TrackerScreenState extends State<TrackerScreen> {
   Widget _buildFilterHeader() {
     return Row(
       children: [
-        const Icon(Icons.filter_list, color: ContextColors.textPrimary),
-        const SizedBox(width: ContextSpacing.sm),
+        const Icon(Icons.filter_list, color: AppColors.textPrimary),
+        const SizedBox(width: AppSpacing.sm),
         Text(
           'Filter by Status',
           style: Theme.of(context).textTheme.labelLarge?.copyWith(
-            color: ContextColors.textPrimary,
+            color: AppColors.textPrimary,
           ),
         ),
       ],
@@ -138,14 +138,14 @@ class _TrackerScreenState extends State<TrackerScreen> {
             'All',
             allJobs.length,
             _selectedFilter == null,
-            ContextColors.accent,
+            AppColors.accent,
             () => setState(() => _selectedFilter = null),
           ),
-          const SizedBox(width: ContextSpacing.sm),
+          const SizedBox(width: AppSpacing.sm),
           ...ApplicationStatus.values.map((status) {
             final count = statusCounts[status] ?? 0;
             return Padding(
-              padding: const EdgeInsets.only(right: ContextSpacing.sm),
+              padding: const EdgeInsets.only(right: AppSpacing.sm),
               child: _buildFilterChip(
                 status.displayName,
                 count,
@@ -171,13 +171,13 @@ class _TrackerScreenState extends State<TrackerScreen> {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(
-          horizontal: ContextSpacing.md,
-          vertical: ContextSpacing.sm,
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.sm,
         ),
         decoration: BoxDecoration(
-          color: isSelected ? color : ContextColors.background,
+          color: isSelected ? color : AppColors.background,
           border: Border.all(
-            color: isSelected ? ContextColors.borderDark : ContextColors.border,
+            color: isSelected ? AppColors.borderDark : AppColors.border,
           ),
         ),
         child: Row(
@@ -187,14 +187,14 @@ class _TrackerScreenState extends State<TrackerScreen> {
               label,
               style: TextStyle(
                 color: isSelected
-                    ? (color == ContextColors.accent 
-                        ? ContextColors.textPrimary 
+                    ? (color == AppColors.accent 
+                        ? AppColors.textPrimary 
                         : Colors.white)
-                    : ContextColors.textSecondary,
+                    : AppColors.textSecondary,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(width: ContextSpacing.xs),
+            const SizedBox(width: AppSpacing.xs),
             _buildCountBadge(count, color, isSelected),
           ],
         ),
@@ -207,14 +207,14 @@ class _TrackerScreenState extends State<TrackerScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
         color: isSelected
-            ? (color == ContextColors.accent 
-                ? ContextColors.textPrimary 
+            ? (color == AppColors.accent 
+                ? AppColors.textPrimary 
                 : Colors.white.withAlpha(51))
             : color.withAlpha(51),
         border: Border.all(
           color: isSelected
-              ? (color == ContextColors.accent 
-                  ? ContextColors.textPrimary 
+              ? (color == AppColors.accent 
+                  ? AppColors.textPrimary 
                   : Colors.white)
               : color,
         ),
@@ -223,8 +223,8 @@ class _TrackerScreenState extends State<TrackerScreen> {
         count.toString(),
         style: TextStyle(
           color: isSelected
-              ? (color == ContextColors.accent 
-                  ? ContextColors.background 
+              ? (color == AppColors.accent 
+                  ? AppColors.background 
                   : color)
               : color,
           fontSize: 12,
@@ -239,14 +239,14 @@ class _TrackerScreenState extends State<TrackerScreen> {
       title: 'No ${_selectedFilter?.displayName ?? ''} Jobs',
       message: 'Try a different filter or add more applications',
       icon: _selectedFilter?.icon ?? Icons.search_off,
-      backgroundColor: ContextColors.neutralLight,
-      borderColor: ContextColors.border,
+      backgroundColor: AppColors.neutralLight,
+      borderColor: AppColors.border,
     );
   }
 
   Widget _buildFilteredJobsList(List<Job> filteredJobs) {
     return ListView.builder(
-      padding: const EdgeInsets.all(ContextSpacing.lg),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       itemCount: filteredJobs.length,
       itemBuilder: (context, index) {
         final job = filteredJobs[index];

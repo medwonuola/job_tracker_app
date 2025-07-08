@@ -22,10 +22,10 @@ class ApplicationTrendChart extends StatelessWidget {
         Text(
           'Application Trend Over Time',
           style: textTheme.labelLarge?.copyWith(
-            color: ContextColors.textPrimary,
+            color: AppColors.textPrimary,
           ),
         ),
-        const SizedBox(height: ContextSpacing.md),
+        const SizedBox(height: AppSpacing.md),
         SizedBox(
           height: 200,
           child: trendData.isNotEmpty ? _buildChart() : _buildEmptyState(context),
@@ -50,7 +50,7 @@ class ApplicationTrendChart extends StatelessWidget {
         gridData: FlGridData(
           horizontalInterval: maxY / 5,
           getDrawingHorizontalLine: (value) => FlLine(
-            color: ContextColors.border,
+            color: AppColors.border,
             strokeWidth: 1,
           ),
           drawVerticalLine: false,
@@ -99,13 +99,13 @@ class ApplicationTrendChart extends StatelessWidget {
           LineChartBarData(
             spots: spots,
             isCurved: true,
-            color: ContextColors.accent,
+            color: AppColors.accent,
             barWidth: 3,
             isStrokeCapRound: true,
             dotData: const FlDotData(show: false),
             belowBarData: BarAreaData(
               show: true,
-              color: ContextColors.accent.withAlpha(51),
+              color: AppColors.accent.withAlpha(51),
             ),
           ),
         ],

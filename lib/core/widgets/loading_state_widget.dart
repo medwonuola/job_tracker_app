@@ -19,20 +19,20 @@ class LoadingStateWidget extends StatelessWidget {
   factory LoadingStateWidget.search() {
     return const LoadingStateWidget(
       message: 'Searching for jobs...',
-      color: ContextColors.accent,
+      color: AppColors.accent,
     );
   }
 
   factory LoadingStateWidget.processing() {
     return const LoadingStateWidget(
       message: 'Processing...',
-      color: ContextColors.info,
+      color: AppColors.info,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final effectiveColor = color ?? ContextColors.accent;
+    final effectiveColor = color ?? AppColors.accent;
     final textTheme = Theme.of(context).textTheme;
 
     return Center(
@@ -41,7 +41,7 @@ class LoadingStateWidget extends StatelessWidget {
         children: [
           if (icon != null) ...[
             Container(
-              padding: const EdgeInsets.all(ContextSpacing.lg),
+              padding: const EdgeInsets.all(AppSpacing.lg),
               decoration: BoxDecoration(
                 color: effectiveColor.withAlpha(25),
                 border: Border.all(
@@ -55,17 +55,17 @@ class LoadingStateWidget extends StatelessWidget {
                 size: size ?? 48,
               ),
             ),
-            const SizedBox(height: ContextSpacing.lg),
+            const SizedBox(height: AppSpacing.lg),
           ],
           CircularProgressIndicator(
             color: effectiveColor,
             strokeWidth: 3,
           ),
-          const SizedBox(height: ContextSpacing.md),
+          const SizedBox(height: AppSpacing.md),
           Text(
             message,
             style: textTheme.bodyMedium?.copyWith(
-              color: ContextColors.textSecondary,
+              color: AppColors.textSecondary,
               fontWeight: FontWeight.w600,
             ),
             textAlign: TextAlign.center,

@@ -1,81 +1,76 @@
-// lib/core/theme/app_theme.dart
-
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
 import 'app_typography.dart';
 
-class ContextTheme {
+class AppTheme {
   static final ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
-    scaffoldBackgroundColor: ContextColors.background,
-    primaryColor: ContextColors.accent,
-    fontFamily: ContextTypography.fontFamily,
+    scaffoldBackgroundColor: AppColors.background,
+    primaryColor: AppColors.accent,
+    fontFamily: AppTypography.fontFamily,
     appBarTheme: AppBarTheme(
-      backgroundColor: ContextColors.background,
+      backgroundColor: AppColors.background,
       elevation: 0,
       centerTitle: false,
-      titleTextStyle: ContextTypography.h4.copyWith(
-        color: ContextColors.textPrimary,
+      titleTextStyle: AppTypography.h4.copyWith(
+        color: AppColors.textPrimary,
         fontWeight: FontWeight.w800,
       ),
-      iconTheme: const IconThemeData(color: ContextColors.textPrimary),
-      // The 'bottom' property was removed as it's not a valid AppBarTheme parameter.
-      // The border is now applied directly on the AppBar widgets where needed.
+      iconTheme: const IconThemeData(color: AppColors.textPrimary),
     ),
     textTheme: TextTheme(
-      displayLarge: ContextTypography.h1,
-      displayMedium: ContextTypography.h2,
-      displaySmall: ContextTypography.h3,
-      headlineMedium: ContextTypography.h4,
-      titleLarge: ContextTypography.bodyLg,
-      bodyLarge: ContextTypography.bodyMd,
-      bodyMedium: ContextTypography.bodySm,
-      labelLarge: ContextTypography.bodyMd.copyWith(
+      displayLarge: AppTypography.h1,
+      displayMedium: AppTypography.h2,
+      displaySmall: AppTypography.h3,
+      headlineMedium: AppTypography.h4,
+      titleLarge: AppTypography.bodyLg,
+      bodyLarge: AppTypography.bodyMd,
+      bodyMedium: AppTypography.bodySm,
+      labelLarge: AppTypography.bodyMd.copyWith(
         fontWeight: FontWeight.w800,
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: ContextColors.background,
+      fillColor: AppColors.background,
       contentPadding: const EdgeInsets.symmetric(
         horizontal: 18.0,
         vertical: 18.0,
       ),
-      hintStyle: ContextTypography.bodyMd.copyWith(
-        color: ContextColors.textSecondary,
+      hintStyle: AppTypography.bodyMd.copyWith(
+        color: AppColors.textSecondary,
       ),
       border: const OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(0)),
-        borderSide: BorderSide(color: ContextColors.border, width: 2.0),
+        borderSide: BorderSide(color: AppColors.border, width: 2.0),
       ),
       enabledBorder: const OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(0)),
-        borderSide: BorderSide(color: ContextColors.border, width: 2.0),
+        borderSide: BorderSide(color: AppColors.border, width: 2.0),
       ),
       focusedBorder: const OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(0)),
-        borderSide: BorderSide(color: ContextColors.accent, width: 2.0),
+        borderSide: BorderSide(color: AppColors.accent, width: 2.0),
       ),
     ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-      backgroundColor: ContextColors.background,
-      selectedItemColor: ContextColors.textPrimary,
-      unselectedItemColor: ContextColors.textSecondary,
+      backgroundColor: AppColors.background,
+      selectedItemColor: AppColors.textPrimary,
+      unselectedItemColor: AppColors.textSecondary,
       showUnselectedLabels: false,
       showSelectedLabels: false,
       type: BottomNavigationBarType.fixed,
       elevation: 0,
     ),
     dividerTheme: const DividerThemeData(
-      color: ContextColors.border,
+      color: AppColors.border,
       thickness: 2.0,
       space: 1,
     ),
     chipTheme: ChipThemeData(
-      backgroundColor:
-          ContextColors.accent.withAlpha(38), // Corrected deprecated member
-      labelStyle: ContextTypography.bodySm.copyWith(
-        color: ContextColors.textPrimary,
+      backgroundColor: AppColors.accent.withAlpha(38),
+      labelStyle: AppTypography.bodySm.copyWith(
+        color: AppColors.textPrimary,
         fontWeight: FontWeight.w800,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
@@ -84,25 +79,22 @@ class ContextTheme {
       ),
     ),
     cardTheme: const CardThemeData(
-      // Corrected class name
       elevation: 0,
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(),
     ),
     tabBarTheme: TabBarThemeData(
-      // Corrected class name
       indicator: const UnderlineTabIndicator(
         borderSide: BorderSide(
-          color: ContextColors.textPrimary,
+          color: AppColors.textPrimary,
           width: 3.0,
         ),
       ),
-      labelColor: ContextColors.textPrimary,
-      unselectedLabelColor: ContextColors.textSecondary,
-      labelStyle:
-          ContextTypography.bodySm.copyWith(fontWeight: FontWeight.w800),
+      labelColor: AppColors.textPrimary,
+      unselectedLabelColor: AppColors.textSecondary,
+      labelStyle: AppTypography.bodySm.copyWith(fontWeight: FontWeight.w800),
       unselectedLabelStyle:
-          ContextTypography.bodySm.copyWith(fontWeight: FontWeight.w800),
+          AppTypography.bodySm.copyWith(fontWeight: FontWeight.w800),
     ),
   );
 }

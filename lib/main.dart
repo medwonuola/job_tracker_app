@@ -20,13 +20,13 @@ Future<void> main() async {
   final applicationTrackerProvider = ApplicationTrackerProvider();
   await applicationTrackerProvider.loadTrackedJobs();
 
-  runApp(ContextApp(applicationTrackerProvider: applicationTrackerProvider));
+  runApp(JobsTrackerApp(applicationTrackerProvider: applicationTrackerProvider));
 }
 
-class ContextApp extends StatelessWidget {
+class JobsTrackerApp extends StatelessWidget {
   final ApplicationTrackerProvider applicationTrackerProvider;
 
-  const ContextApp({
+  const JobsTrackerApp({
     super.key,
     required this.applicationTrackerProvider,
   });
@@ -45,8 +45,8 @@ class ContextApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        title: 'Context Job Tracker',
-        theme: ContextTheme.lightTheme,
+        title: 'Jobs Tracker',
+        theme: AppTheme.lightTheme,
         home: const HomeScreen(),
         debugShowCheckedModeBanner: false,
       ),

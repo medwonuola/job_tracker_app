@@ -1,5 +1,5 @@
 class AppConstants {
-  static const String appName = 'Context Job Tracker';
+  static const String appName = 'Jobs Tracker';
   
   static const int maxCacheEntries = 50;
   static const int connectTimeoutSeconds = 15;

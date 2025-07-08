@@ -18,16 +18,16 @@ class QuickApplyBadge extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: ContextColors.accent,
+        color: AppColors.accent,
         shape: BoxShape.circle,
         border: Border.all(
-          color: ContextColors.background,
+          color: AppColors.background,
           width: 2.0,
         ),
       ),
       child: Icon(
         Icons.flash_on,
-        color: ContextColors.textPrimary,
+        color: AppColors.textPrimary,
         size: size * 0.6,
       ),
     );
@@ -40,11 +40,11 @@ class QuickApplyBadge extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         badge,
-        const SizedBox(width: ContextSpacing.xs),
+        const SizedBox(width: AppSpacing.xs),
         Text(
           'Quick Apply',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: ContextColors.textPrimary,
+            color: AppColors.textPrimary,
             fontWeight: FontWeight.w600,
           ),
         ),

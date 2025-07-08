@@ -23,10 +23,10 @@ class TimeSpentChart extends StatelessWidget {
         Text(
           'Average Days in Each Status',
           style: textTheme.labelLarge?.copyWith(
-            color: ContextColors.textPrimary,
+            color: AppColors.textPrimary,
           ),
         ),
-        const SizedBox(height: ContextSpacing.md),
+        const SizedBox(height: AppSpacing.md),
         SizedBox(
           height: 200,
           child: hasData ? _buildChart() : _buildEmptyState(context),
@@ -84,7 +84,7 @@ class TimeSpentChart extends StatelessWidget {
         gridData: FlGridData(
           horizontalInterval: maxY / 5,
           getDrawingHorizontalLine: (value) => FlLine(
-            color: ContextColors.border,
+            color: AppColors.border,
             strokeWidth: 1,
           ),
           drawVerticalLine: false,
@@ -129,7 +129,7 @@ class TimeSpentChart extends StatelessWidget {
   Color _getStatusColor(ApplicationStatus status) {
     switch (status) {
       case ApplicationStatus.saved:
-        return ContextColors.accent;
+        return AppColors.accent;
       case ApplicationStatus.applied:
         return Colors.blue;
       case ApplicationStatus.interviewing:

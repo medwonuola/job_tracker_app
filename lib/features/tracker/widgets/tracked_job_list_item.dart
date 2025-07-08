@@ -23,15 +23,15 @@ class TrackedJobListItem extends StatelessWidget {
   static Color _getStatusColor(ApplicationStatus status) {
     switch (status) {
       case ApplicationStatus.saved:
-        return ContextColors.neutral;
+        return AppColors.neutral;
       case ApplicationStatus.applied:
-        return ContextColors.info;
+        return AppColors.info;
       case ApplicationStatus.interviewing:
-        return ContextColors.warning;
+        return AppColors.warning;
       case ApplicationStatus.offered:
-        return ContextColors.success;
+        return AppColors.success;
       case ApplicationStatus.rejected:
-        return ContextColors.warning;
+        return AppColors.warning;
     }
   }
 
@@ -46,7 +46,7 @@ class TrackedJobListItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHeader(context, textTheme),
-          const SizedBox(height: ContextSpacing.md),
+          const SizedBox(height: AppSpacing.md),
           _buildStatusContainer(textTheme, statusColor),
         ],
       ),
@@ -58,7 +58,7 @@ class TrackedJobListItem extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildCompanyLogo(),
-        const SizedBox(width: ContextSpacing.md),
+        const SizedBox(width: AppSpacing.md),
         Expanded(child: _buildJobInfo(textTheme)),
         _buildStatusMenu(context),
       ],
@@ -69,7 +69,7 @@ class TrackedJobListItem extends StatelessWidget {
     return Container(
       width: AppConstants.companyLogoSize.toDouble(),
       height: AppConstants.companyLogoSize.toDouble(),
-      color: ContextColors.neutralLight,
+      color: AppColors.neutralLight,
       child: CachedNetworkImage(
         imageUrl: job.company.image ?? '',
         imageBuilder: (context, imageProvider) => Image(
@@ -78,12 +78,12 @@ class TrackedJobListItem extends StatelessWidget {
         ),
         placeholder: (context, url) => const Icon(
           Icons.domain_rounded,
-          color: ContextColors.neutral,
+          color: AppColors.neutral,
           size: 20,
         ),
         errorWidget: (context, url, error) => const Icon(
           Icons.domain_rounded,
-          color: ContextColors.neutral,
+          color: AppColors.neutral,
           size: 20,
         ),
       ),
@@ -97,25 +97,25 @@ class TrackedJobListItem extends StatelessWidget {
         Text(
           job.title,
           style: textTheme.titleMedium?.copyWith(
-            color: ContextColors.textPrimary,
+            color: AppColors.textPrimary,
             fontWeight: FontWeight.w700,
           ),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
-        const SizedBox(height: ContextSpacing.xs),
+        const SizedBox(height: AppSpacing.xs),
         Text(
           job.company.name,
           style: textTheme.bodyMedium?.copyWith(
-            color: ContextColors.textSecondary,
+            color: AppColors.textSecondary,
             fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: ContextSpacing.xs),
+        const SizedBox(height: AppSpacing.xs),
         Text(
           'Added ${DateFormatter.getTimeAgo(job.createdAt)}',
           style: textTheme.bodySmall?.copyWith(
-            color: ContextColors.textSecondary,
+            color: AppColors.textSecondary,
           ),
         ),
       ],
@@ -137,9 +137,9 @@ class TrackedJobListItem extends StatelessWidget {
                     status.icon,
                     color: isCurrentStatus 
                         ? _getStatusColor(status) 
-                        : ContextColors.textSecondary,
+                        : AppColors.textSecondary,
                   ),
-                  const SizedBox(width: ContextSpacing.sm),
+                  const SizedBox(width: AppSpacing.sm),
                   Text(
                     status.displayName,
                     style: TextStyle(
@@ -154,7 +154,7 @@ class TrackedJobListItem extends StatelessWidget {
           }).toList(),
           icon: const Icon(
             Icons.more_vert_rounded,
-            color: ContextColors.textSecondary,
+            color: AppColors.textSecondary,
           ),
         );
       },
@@ -164,15 +164,15 @@ class TrackedJobListItem extends StatelessWidget {
   Widget _buildStatusContainer(TextTheme textTheme, Color statusColor) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: ContextSpacing.md,
-        vertical: ContextSpacing.sm,
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
       ),
       decoration: BoxDecoration(color: statusColor.withAlpha(25)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(job.status.icon, size: 16, color: statusColor),
-          const SizedBox(width: ContextSpacing.xs),
+          const SizedBox(width: AppSpacing.xs),
           Text(
             job.status.displayName,
             style: TextStyle(

@@ -2,31 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:job_tracker_app/core/theme/app_colors.dart';
 import 'package:job_tracker_app/core/theme/app_spacing.dart';
 
-enum ContextButtonVariant { primary, outline, success, warning }
+enum AppButtonVariant { primary, outline, success, warning }
 
-class ContextButton extends StatefulWidget {
+class AppButton extends StatefulWidget {
   final String label;
   final VoidCallback? onPressed;
-  final ContextButtonVariant variant;
+  final AppButtonVariant variant;
   final IconData? icon;
   final bool isLoading;
   final bool isExpanded;
 
-  const ContextButton({
+  const AppButton({
     super.key,
     required this.label,
     this.onPressed,
-    this.variant = ContextButtonVariant.primary,
+    this.variant = AppButtonVariant.primary,
     this.icon,
     this.isLoading = false,
     this.isExpanded = false,
   });
 
   @override
-  State<ContextButton> createState() => _ContextButtonState();
+  State<AppButton> createState() => _AppButtonState();
 }
 
-class _ContextButtonState extends State<ContextButton>
+class _AppButtonState extends State<AppButton>
     with SingleTickerProviderStateMixin {
   bool _isHovered = false;
   late final AnimationController _animationController;
@@ -57,37 +57,37 @@ class _ContextButtonState extends State<ContextButton>
 
   Color _getNormalBackgroundColor() {
     switch (widget.variant) {
-      case ContextButtonVariant.outline:
+      case AppButtonVariant.outline:
         return Colors.transparent;
-      case ContextButtonVariant.success:
-        return ContextColors.success;
-      case ContextButtonVariant.warning:
-        return ContextColors.warning;
-      case ContextButtonVariant.primary:
-        return ContextColors.accent;
+      case AppButtonVariant.success:
+        return AppColors.success;
+      case AppButtonVariant.warning:
+        return AppColors.warning;
+      case AppButtonVariant.primary:
+        return AppColors.accent;
     }
   }
 
   Color _getHoverBackgroundColor() {
     switch (widget.variant) {
-      case ContextButtonVariant.outline:
+      case AppButtonVariant.outline:
         return Colors.transparent;
-      case ContextButtonVariant.success:
-        return ContextColors.success.withValues(alpha: 0.9);
-      case ContextButtonVariant.warning:
-        return ContextColors.warning.withValues(alpha: 0.9);
-      case ContextButtonVariant.primary:
-        return ContextColors.borderDark;
+      case AppButtonVariant.success:
+        return AppColors.success.withValues(alpha: 0.9);
+      case AppButtonVariant.warning:
+        return AppColors.warning.withValues(alpha: 0.9);
+      case AppButtonVariant.primary:
+        return AppColors.borderDark;
     }
   }
 
   Color _getForegroundColor() {
-    if (widget.variant == ContextButtonVariant.outline) {
-      return ContextColors.textPrimary;
+    if (widget.variant == AppButtonVariant.outline) {
+      return AppColors.textPrimary;
     }
     
-    if (widget.variant == ContextButtonVariant.primary) {
-      return _isHovered ? ContextColors.accent : ContextColors.textPrimary;
+    if (widget.variant == AppButtonVariant.primary) {
+      return _isHovered ? AppColors.accent : AppColors.textPrimary;
     }
     
     return Colors.white;
@@ -120,7 +120,7 @@ class _ContextButtonState extends State<ContextButton>
               backgroundColor: WidgetStateProperty.resolveWith<Color>(
                 (states) {
                   if (states.contains(WidgetState.disabled)) {
-                    return ContextColors.neutralLight;
+                    return AppColors.neutralLight;
                   }
                   return _backgroundColorAnimation.value ?? _getNormalBackgroundColor();
                 },
@@ -128,7 +128,7 @@ class _ContextButtonState extends State<ContextButton>
               foregroundColor: WidgetStateProperty.resolveWith<Color>(
                 (states) {
                   if (states.contains(WidgetState.disabled)) {
-                    return ContextColors.neutral;
+                    return AppColors.neutral;
                   }
                   return _getForegroundColor();
                 },
@@ -141,8 +141,8 @@ class _ContextButtonState extends State<ContextButton>
               ),
               padding: WidgetStateProperty.all<EdgeInsets>(
                 const EdgeInsets.symmetric(
-                  vertical: ContextSpacing.md,
-                  horizontal: ContextSpacing.lg,
+                  vertical: AppSpacing.md,
+                  horizontal: AppSpacing.lg,
                 ),
               ),
               textStyle: WidgetStateProperty.all(textTheme.labelLarge),
@@ -160,7 +160,7 @@ class _ContextButtonState extends State<ContextButton>
       width: 20,
       child: CircularProgressIndicator(
         strokeWidth: 2,
-        color: ContextColors.textPrimary,
+        color: AppColors.textPrimary,
       ),
     );
   }
@@ -175,7 +175,7 @@ class _ContextButtonState extends State<ContextButton>
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Icon(widget.icon, size: 18),
-        const SizedBox(width: ContextSpacing.xs),
+        const SizedBox(width: AppSpacing.xs),
         Text(widget.label),
       ],
     );
@@ -183,13 +183,13 @@ class _ContextButtonState extends State<ContextButton>
 
   Color _getBorderColor() {
     switch (widget.variant) {
-      case ContextButtonVariant.success:
-        return ContextColors.success;
-      case ContextButtonVariant.warning:
-        return ContextColors.warning;
-      case ContextButtonVariant.outline:
-      case ContextButtonVariant.primary:
-        return ContextColors.borderDark;
+      case AppButtonVariant.success:
+        return AppColors.success;
+      case AppButtonVariant.warning:
+        return AppColors.warning;
+      case AppButtonVariant.outline:
+      case AppButtonVariant.primary:
+        return AppColors.borderDark;
     }
   }
 }

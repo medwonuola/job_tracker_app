@@ -4,7 +4,7 @@ import 'package:job_tracker_app/core/theme/app_colors.dart';
 import 'package:job_tracker_app/core/theme/app_spacing.dart';
 import 'package:job_tracker_app/core/utils/debouncer.dart';
 import 'package:job_tracker_app/core/utils/throttler.dart';
-import 'package:job_tracker_app/core/widgets/context_button.dart';
+import 'package:job_tracker_app/core/widgets/app_button.dart';
 import 'package:job_tracker_app/data/models/search_filters.dart';
 import 'package:job_tracker_app/data/models/location_suggestion.dart';
 import 'package:job_tracker_app/data/providers/job_search_provider.dart';
@@ -117,19 +117,19 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
     return Container(
       height: screenHeight * 0.9,
       decoration: const BoxDecoration(
-        color: ContextColors.background,
+        color: AppColors.background,
         border: Border(
-          top: BorderSide(color: ContextColors.border),
-          left: BorderSide(color: ContextColors.border),
-          right: BorderSide(color: ContextColors.border),
+          top: BorderSide(color: AppColors.border),
+          left: BorderSide(color: AppColors.border),
+          right: BorderSide(color: AppColors.border),
         ),
       ),
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(ContextSpacing.lg),
+            padding: const EdgeInsets.all(AppSpacing.lg),
             decoration: const BoxDecoration(
-              color: ContextColors.accent,
+              color: AppColors.accent,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -137,7 +137,7 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
                 Text(
                   'Filters',
                   style: textTheme.headlineMedium?.copyWith(
-                    color: ContextColors.textPrimary,
+                    color: AppColors.textPrimary,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
@@ -146,7 +146,7 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
                   child: Text(
                     'Clear All',
                     style: TextStyle(
-                      color: ContextColors.textPrimary,
+                      color: AppColors.textPrimary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -156,7 +156,7 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
           ),
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(ContextSpacing.lg),
+              padding: const EdgeInsets.all(AppSpacing.lg),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -190,24 +190,24 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
             ),
           ),
           Container(
-            padding: const EdgeInsets.all(ContextSpacing.lg),
+            padding: const EdgeInsets.all(AppSpacing.lg),
             decoration: const BoxDecoration(
-              color: ContextColors.background,
-              border: Border(top: BorderSide(color: ContextColors.border)),
+              color: AppColors.background,
+              border: Border(top: BorderSide(color: AppColors.border)),
             ),
             child: Row(
               children: [
                 Expanded(
-                  child: ContextButton(
+                  child: AppButton(
                     label: 'Clear',
-                    variant: ContextButtonVariant.outline,
+                    variant: AppButtonVariant.outline,
                     onPressed: _clearFilters,
                   ),
                 ),
-                const SizedBox(width: ContextSpacing.md),
+                const SizedBox(width: AppSpacing.md),
                 Expanded(
                   flex: 2,
-                  child: ContextButton(
+                  child: AppButton(
                     label: 'Apply Filters',
                     onPressed: _applyFilters,
                   ),
@@ -222,7 +222,7 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
 
   Widget _buildSection(String title, Widget content) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: ContextSpacing.xl),
+      padding: const EdgeInsets.only(bottom: AppSpacing.xl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -230,10 +230,10 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
             title,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w700,
-                  color: ContextColors.textPrimary,
+                  color: AppColors.textPrimary,
                 ),
           ),
-          const SizedBox(height: ContextSpacing.md),
+          const SizedBox(height: AppSpacing.md),
           content,
         ],
       ),
@@ -261,16 +261,16 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
           },
         ),
         if (_selectedLocation != null) ...[
-          const SizedBox(height: ContextSpacing.md),
+          const SizedBox(height: AppSpacing.md),
           Container(
-            padding: const EdgeInsets.all(ContextSpacing.md),
+            padding: const EdgeInsets.all(AppSpacing.md),
             decoration: const BoxDecoration(
-              color: ContextColors.successLight,
+              color: AppColors.successLight,
             ),
             child: Row(
               children: [
-                const Icon(Icons.location_on, color: ContextColors.success),
-                const SizedBox(width: ContextSpacing.sm),
+                const Icon(Icons.location_on, color: AppColors.success),
+                const SizedBox(width: AppSpacing.sm),
                 Expanded(child: Text(_selectedLocation!.label)),
                 IconButton(
                   icon: const Icon(Icons.close),
@@ -284,11 +284,11 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
           ),
         ],
         if (_availableLocations.isNotEmpty && _selectedLocation == null) ...[
-          const SizedBox(height: ContextSpacing.md),
+          const SizedBox(height: AppSpacing.md),
           Container(
             height: 200,
             decoration: const BoxDecoration(
-              color: ContextColors.neutralLight,
+              color: AppColors.neutralLight,
             ),
             child: ListView.builder(
               itemCount: _availableLocations.length,
@@ -324,15 +324,15 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
       onChanged: (value) =>
           setState(() => _filters = _filters.copyWith(quickApplyOnly: value)),
       contentPadding: EdgeInsets.zero,
-      activeColor: ContextColors.accent,
+      activeColor: AppColors.accent,
     );
   }
 
   Widget _buildChipGroup(List<String> options, List<String> selected,
       void Function(List<String>) onChanged,) {
     return Wrap(
-      spacing: ContextSpacing.sm,
-      runSpacing: ContextSpacing.sm,
+      spacing: AppSpacing.sm,
+      runSpacing: AppSpacing.sm,
       children: options.map((option) {
         final isSelected = selected.contains(option);
         return FilterChip(
@@ -347,8 +347,8 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
             }
             onChanged(newSelected);
           },
-          selectedColor: ContextColors.accent,
-          backgroundColor: ContextColors.neutralLight,
+          selectedColor: AppColors.accent,
+          backgroundColor: AppColors.neutralLight,
           showCheckmark: false,
         );
       }).toList(),
@@ -359,8 +359,8 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
     final selectedPerks = _filters.perks ?? <String>{};
 
     return Wrap(
-      spacing: ContextSpacing.sm,
-      runSpacing: ContextSpacing.sm,
+      spacing: AppSpacing.sm,
+      runSpacing: AppSpacing.sm,
       children: _perksOptions.entries.map((entry) {
         final perk = entry.key;
         final icon = entry.value;
@@ -379,8 +379,8 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
             }
             setState(() => _filters = _filters.copyWith(perks: newPerks));
           },
-          selectedColor: ContextColors.accent,
-          backgroundColor: ContextColors.neutralLight,
+          selectedColor: AppColors.accent,
+          backgroundColor: AppColors.neutralLight,
           showCheckmark: false,
         );
       }).toList(),
@@ -401,9 +401,9 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
           onChanged: (value) => setState(
               () => _filters = _filters.copyWith(restrictTransparent: value),),
           contentPadding: EdgeInsets.zero,
-          activeColor: ContextColors.info,
+          activeColor: AppColors.info,
         ),
-        const SizedBox(height: ContextSpacing.lg),
+        const SizedBox(height: AppSpacing.lg),
         DropdownButtonFormField<String>(
           decoration: const InputDecoration(labelText: 'Frequency'),
           value: frequency,
@@ -414,7 +414,7 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
           onChanged: (value) =>
               setState(() => _filters = _filters.copyWith(frequency: value)),
         ),
-        const SizedBox(height: ContextSpacing.lg),
+        const SizedBox(height: AppSpacing.lg),
         Text(
           'Range: \$${currentMin.round().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')} - \$${currentMax.round().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}',
           style: Theme.of(context)
@@ -431,7 +431,7 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
           onChanged: (values) => _salaryThrottler(() => setState(() =>
               _filters =
                   _filters.copyWith(minPay: values.start, maxPay: values.end),),),
-          activeColor: ContextColors.accent,
+          activeColor: AppColors.accent,
         ),
       ],
     );

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:job_tracker_app/core/theme/app_colors.dart';
 import 'package:job_tracker_app/core/theme/app_spacing.dart';
-import 'package:job_tracker_app/core/widgets/context_button.dart';
+import 'package:job_tracker_app/core/widgets/app_button.dart';
 
 class ErrorStateWidget extends StatelessWidget {
   final String title;
@@ -34,8 +34,8 @@ class ErrorStateWidget extends StatelessWidget {
       icon: Icons.wifi_off_rounded,
       onRetry: onRetry,
       retryButtonText: 'Retry',
-      backgroundColor: ContextColors.warningLight,
-      borderColor: ContextColors.warning,
+      backgroundColor: AppColors.warningLight,
+      borderColor: AppColors.warning,
     );
   }
 
@@ -48,8 +48,8 @@ class ErrorStateWidget extends StatelessWidget {
       title: 'No Results Found',
       message: customMessage ?? 'No jobs found matching your criteria.',
       icon: Icons.search_off_rounded,
-      backgroundColor: ContextColors.neutralLight,
-      borderColor: ContextColors.border,
+      backgroundColor: AppColors.neutralLight,
+      borderColor: AppColors.border,
     );
   }
 
@@ -64,21 +64,21 @@ class ErrorStateWidget extends StatelessWidget {
       message: customMessage ?? 'An unexpected error occurred.',
       onRetry: onRetry,
       retryButtonText: 'Try Again',
-      backgroundColor: ContextColors.warningLight,
-      borderColor: ContextColors.warning,
+      backgroundColor: AppColors.warningLight,
+      borderColor: AppColors.warning,
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final effectiveBackgroundColor = backgroundColor ?? ContextColors.warningLight;
-    final effectiveBorderColor = borderColor ?? ContextColors.warning;
+    final effectiveBackgroundColor = backgroundColor ?? AppColors.warningLight;
+    final effectiveBorderColor = borderColor ?? AppColors.warning;
 
     return Center(
       child: Container(
-        margin: const EdgeInsets.all(ContextSpacing.lg),
-        padding: const EdgeInsets.all(ContextSpacing.xl),
+        margin: const EdgeInsets.all(AppSpacing.lg),
+        padding: const EdgeInsets.all(AppSpacing.xl),
         decoration: BoxDecoration(
           color: effectiveBackgroundColor,
           border: Border.all(
@@ -90,7 +90,7 @@ class ErrorStateWidget extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: const EdgeInsets.all(ContextSpacing.lg),
+              padding: const EdgeInsets.all(AppSpacing.lg),
               decoration: BoxDecoration(
                 color: effectiveBorderColor.withAlpha(25),
                 border: Border.all(
@@ -104,7 +104,7 @@ class ErrorStateWidget extends StatelessWidget {
                 size: 48,
               ),
             ),
-            const SizedBox(height: ContextSpacing.lg),
+            const SizedBox(height: AppSpacing.lg),
             Text(
               title,
               style: textTheme.headlineMedium?.copyWith(
@@ -113,17 +113,17 @@ class ErrorStateWidget extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: ContextSpacing.sm),
+            const SizedBox(height: AppSpacing.sm),
             Text(
               message,
               style: textTheme.bodyMedium?.copyWith(
-                color: ContextColors.textPrimary,
+                color: AppColors.textPrimary,
               ),
               textAlign: TextAlign.center,
             ),
             if (onRetry != null) ...[
-              const SizedBox(height: ContextSpacing.lg),
-              ContextButton(
+              const SizedBox(height: AppSpacing.lg),
+              AppButton(
                 label: retryButtonText ?? 'Retry',
                 onPressed: onRetry,
                 icon: Icons.refresh_rounded,

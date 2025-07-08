@@ -15,8 +15,8 @@ class BorderedCard extends StatefulWidget {
     super.key,
     required this.child,
     this.onTap,
-    this.padding = const EdgeInsets.all(ContextSpacing.md),
-    this.margin = const EdgeInsets.only(bottom: ContextSpacing.md),
+    this.padding = const EdgeInsets.all(AppSpacing.md),
+    this.margin = const EdgeInsets.only(bottom: AppSpacing.md),
     this.borderColor,
     this.backgroundColor,
     this.showHoverEffect = true,
@@ -40,8 +40,8 @@ class _BorderedCardState extends State<BorderedCard>
     );
 
     _borderColorAnimation = ColorTween(
-      begin: widget.borderColor ?? ContextColors.border,
-      end: ContextColors.borderDark,
+      begin: widget.borderColor ?? AppColors.border,
+      end: AppColors.borderDark,
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOut,
@@ -79,10 +79,10 @@ class _BorderedCardState extends State<BorderedCard>
               return Container(
                 padding: widget.padding,
                 decoration: BoxDecoration(
-                  color: widget.backgroundColor ?? ContextColors.background,
+                  color: widget.backgroundColor ?? AppColors.background,
                   border: Border.all(
                     color: _borderColorAnimation.value ?? 
-                           (widget.borderColor ?? ContextColors.border),
+                           (widget.borderColor ?? AppColors.border),
                     width: 2.0,
                   ),
                 ),
